@@ -1,0 +1,30 @@
+﻿@page
+@model ShoeShop.Pages.NuModel
+@{
+    ViewData["Title"] = "Giày Nữ";
+    // 1. Đặt màu nền (hồng nhạt, hợp với ảnh sản phẩm Nữ)
+    ViewData["BackgroundColor"] = "bg-pink-50";
+}
+
+<!-- 2. Đã xóa class "bg-white" ở div dưới đây -->
+<div>
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+
+        <h2 class="text-3xl font-extrabold tracking-tight text-gray-900 text-center">
+            Giày Nữ
+        </h2>
+        <p class="mt-4 text-base text-gray-500 text-center">
+            Phong cách và sự thoải mái, khám phá bộ sưu tập giày nữ đa dạng của chúng tôi.
+        </p>
+
+        <div class="mt-10 grid grid-cols-1 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+
+            @foreach (var product in Model.Products)
+            {
+                <partial name="Shared/_ProductCard" model="product" />
+            }
+
+        </div>
+
+    </div>
+</div>

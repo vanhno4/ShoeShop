@@ -1,0 +1,259 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cửa Hàng Giày - Trang Chủ</title>
+    <!-- Tải Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tải font Inter -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <!-- Icon (ví dụ: cho giỏ hàng) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Hiệu ứng mượt mà cho nút và thẻ sản phẩm */
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .product-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Header / Thanh điều hướng -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="text-3xl font-bold text-gray-900">
+                <i class="fa-solid fa-shoe-prints mr-2 text-indigo-600"></i>
+                Shoe<span class="text-indigo-600">Vibe</span>
+            </a>
+
+            <!-- Menu cho Desktop -->
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium">Trang Chủ</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium">Nam</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium">Nữ</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium">Trẻ Em</a>
+                <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium">Giảm Giá</a>
+            </div>
+
+            <!-- Giỏ hàng -->
+            <div class="flex items-center">
+                <a href="#" class="text-gray-600 hover:text-indigo-600 relative p-2">
+                    <i class="fa-solid fa-cart-shopping fa-lg"></i>
+                    <!-- Thông báo số lượng (ví dụ) -->
+                    <span class="absolute top-0 right-0 -mt-1 -mr-1 bg-indigo-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                </a>
+                <!-- Nút menu cho mobile -->
+                <button id="mobile-menu-button" class="md:hidden ml-3 p-2 text-gray-600 hover:text-indigo-600">
+                    <i class="fa-solid fa-bars fa-lg"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Menu cho Mobile (ẩn mặc định) -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200">
+            <a href="#" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">Trang Chủ</a>
+            <a href="#" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">Nam</a>
+            <a href="#" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">Nữ</a>
+            <a href="#" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">Trẻ Em</a>
+            <a href="#" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">Giảm Giá</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <!-- Hero Section (Banner quảng cáo) -->
+        <section class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg shadow-xl p-8 md:p-12 text-white text-center mb-16 overflow-hidden relative">
+            <div class="relative z-10">
+                <h1 class="text-3xl md:text-5xl font-bold mb-4">Bộ Sưu Tập Mùa Hè</h1>
+                <p class="text-lg md:text-xl mb-8">Khám phá những mẫu giày mới nhất, năng động và đầy phong cách.</p>
+                <a href="#" class="bg-white text-indigo-600 font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition duration-300">
+                    Mua Ngay
+                </a>
+            </div>
+            <!-- Hình ảnh giày mẫu (giả) -->
+            <div class="absolute -bottom-16 -right-10 opacity-20 transform rotate-12">
+                <i class="fa-solid fa-shoe-prints text-white" style="font-size: 15rem;"></i>
+            </div>
+        </section>
+
+        <!-- Product Grid (Lưới sản phẩm) -->
+        <section>
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Sản Phẩm Nổi Bật</h2>
+
+            <!-- Vùng chứa sản phẩm sẽ được lấp đầy bằng JavaScript -->
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Các thẻ sản phẩm sẽ được chèn vào đây -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 mt-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Giới thiệu -->
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-4">
+                        <i class="fa-solid fa-shoe-prints mr-2 text-indigo-400"></i>
+                        Shoe<span class="text-indigo-400">Vibe</span>
+                    </h3>
+                    <p class="text-gray-400">Mang đến phong cách và sự thoải mái cho mỗi bước chân của bạn.</p>
+                </div>
+
+                <!-- Liên kết nhanh -->
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Liên Kết Nhanh</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-indigo-400">Về Chúng Tôi</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">Điều Khoản Dịch Vụ</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">Liên Hệ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Hỗ trợ khách hàng -->
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Hỗ Trợ</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-indigo-400">Câu Hỏi Thường Gặp</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">Hướng Dẫn Đặt Hàng</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">Chính Sách Đổi Trả</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">Theo Dõi Đơn Hàng</a></li>
+                    </ul>
+                </div>
+
+                <!-- Mạng xã hội -->
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Theo Dõi Chúng Tôi</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-indigo-400 text-2xl"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-indigo-400 text-2xl"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-indigo-400 text-2xl"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-indigo-400 text-2xl"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                &copy; 2025 ShoeVibe. Đã đăng ký bản quyền.
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- JavaScript -->
+    <script>
+        // --- Dữ liệu 30 sản phẩm mẫu ---
+        const products = [
+            { id: 1, name: "Giày Chạy Bộ Năng Động", category: "Nam", price: "1.200.000₫", img: "running" },
+            { id: 2, name: "Sneaker Cổ Điển", category: "Nữ", price: "950.000₫", img: "sneaker" },
+            { id: 3, name: "Giày Lười Vải", category: "Nam", price: "780.000₫", img: "casual" },
+            { id: 4, name: "Sandal Đế Xuồng", category: "Nữ", price: "850.000₫", img: "sandal" },
+            { id: 5, name: "Giày Tây Da Bò", category: "Nam", price: "2.500.000₫", img: "leather" },
+            { id: 6, name: "Boot Cổ Ngắn", category: "Nữ", price: "1.800.000₫", img: "boot" },
+            { id: 7, name: "Giày Thể Thao Trẻ Em", category: "Trẻ Em", price: "600.000₫", img: "kids" },
+            { id: 8, name: "Giày Cao Gót", category: "Nữ", price: "1.300.000₫", img: "heels" },
+            { id: 9, name: "Giày Bóng Rổ", category: "Nam", price: "3.200.000₫", img: "basketball" },
+            { id: 10, name: "Giày Búp Bê", category: "Nữ", price: "700.000₫", img: "flat" },
+            { id: 11, name: "Sneaker Vải Trắng", category: "Nam", price: "1.100.000₫", img: "white-sneaker" },
+            { id: 12, name: "Giày Đi Bộ", category: "Nữ", price: "1.050.000₫", img: "walking" },
+            { id: 13, name: "Dép Kẹp", category: "Nam", price: "450.000₫", img: "flip-flop" },
+            { id: 14, name: "Giày Tập Gym", category: "Nữ", price: "1.400.000₫", img: "gym" },
+            { id: 15, name: "Giày Lười Da Lộn", category: "Nam", price: "1.600.000₫", img: "suede" },
+            { id: 16, name: "Sandal Chiến Binh", category: "Nữ", price: "990.000₫", img: "gladiator" },
+            { id: 17, name: "Giày Đá Bóng", category: "Nam", price: "2.100.000₫", img: "soccer" },
+            { id: 18, name: "Giày Vải Cổ Cao", category: "Nữ", price: "1.250.000₫", img: "high-top" },
+            { id: 19, name: "Giày Lười Trẻ Em", category: "Trẻ Em", price: "550.000₫", img: "kids-slipon" },
+            { id: 20, name: "Giày Oxford", category: "Nam", price: "2.800.000₫", img: "oxford" },
+            { id: 21, name: "Giày Mọi", category: "Nữ", price: "880.000₫", img: "moccasin" },
+            { id: 22, name: "Giày Chạy Trail", category: "Nam", price: "1.900.000₫", img: "trail" },
+            { id: 23, name: "Giày Bệt Mũi Nhọn", category: "Nữ", price: "920.000₫", img: "pointed-flat" },
+            { id: 24, name: "Sandal Trẻ Em", category: "Trẻ Em", price: "480.000₫", img: "kids-sandal" },
+            { id: 25, name: "Boot Chelsea", category: "Nam", price: "2.300.000₫", img: "chelsea" },
+            { id: 26, name: "Giày Thể Thao Chunky", category: "Nữ", price: "1.750.000₫", img: "chunky" },
+            { id: 27, name: "Giày Vải Bố", category: "Nam", price: "650.000₫", img: "canvas" },
+            { id: 28, "name": "Giày Gót Vuông", "category": "Nữ", "price": "1.150.000₫", "img": "block-heel" },
+            { id: 29, "name": "Giày Thuyền", "category": "Nam", "price": "1.350.000₫", "img": "boat-shoe" },
+            { id: 30, "name": "Giày Bít Mũi", "category": "Nữ", "price": "1.000.000₫", "img": "pump" }
+        ];
+
+        // --- Hàm để hiển thị sản phẩm ---
+        function displayProducts() {
+            const grid = document.getElementById('product-grid');
+            if (!grid) return;
+
+            products.forEach(product => {
+                // Tạo ảnh placeholder
+                const placeholderUrl = `https://placehold.co/400x400/E0E7FF/4F46E5?text=${product.img}`;
+
+                // Tạo HTML cho mỗi thẻ sản phẩm
+                const productCard = `
+                    <div class="product-card bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+                        <!-- Hình ảnh -->
+                        <div class="relative">
+                            <img src="${placeholderUrl}"
+                                 alt="Ảnh ${product.name}"
+                                 class="w-full h-64 object-cover"
+                                 onerror="this.src='https://placehold.co/400x400/F3F4F6/9CA3AF?text=Ảnh+Lỗi'">
+                            <span class="absolute top-3 left-3 bg-indigo-600 text-white text-xs font-semibold px-2 py-1 rounded-full uppercase">${product.category}</span>
+                        </div>
+
+                        <!-- Thông tin sản phẩm -->
+                        <div class="p-6 flex-grow flex flex-col">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2 truncate">${product.name}</h3>
+                            <p class="text-xl font-bold text-indigo-600 mb-4">${product.price}</p>
+
+                            <!-- Nút thêm giỏ hàng (đẩy xuống dưới) -->
+                            <div class="mt-auto">
+                                <button class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition duration-300 flex items-center justify-center">
+                                    <i class="fa-solid fa-cart-plus mr-2"></i>
+                                    Thêm vào giỏ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Thêm thẻ vào lưới
+                grid.innerHTML += productCard;
+            });
+        }
+
+        // --- Logic cho menu mobile ---
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                // Thay đổi icon bars/x
+                const icon = mobileMenuButton.querySelector('i');
+                if (mobileMenu.classList.contains('hidden')) {
+                    icon.classList.remove('fa-xmark');
+                    icon.classList.add('fa-bars');
+                } else {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-xmark');
+                }
+            });
+        }
+
+        // --- Chạy hàm khi trang tải xong ---
+        document.addEventListener('DOMContentLoaded', displayProducts);
+    </script>
+
+</body>
+</html>

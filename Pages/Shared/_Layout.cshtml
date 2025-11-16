@@ -1,0 +1,204 @@
+﻿@using System.Text.Json
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var cartJson = HttpContextAccessor.HttpContext?.Session.GetString("Cart");
+    int cartCount = 0;
+    if (!string.IsNullOrEmpty(cartJson))
+    {
+        var cart = JsonSerializer.Deserialize<List<int>>(cartJson);
+        cartCount = cart?.Count ?? 0;
+    }
+    var pageBackgroundColor = ViewData["BackgroundColor"] as string ?? "bg-gray-50";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - ShoeShop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="//unpkg.com/alpinejs" defer></script> <!-- Can cho menu dropdown -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .product-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+    </style>
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+
+            <!-- Logo -->
+            <a asp-page="/Index" class="text-3xl font-bold text-gray-900">
+                <i class="fa-solid fa-shoe-prints mr-2 text-indigo-600"></i>
+                Shoe<span class="text-indigo-600">Vibe</span>
+            </a>
+
+            <!-- Menu chinh (Desktop) -->
+            <div class="hidden md:flex items-center space-x-6">
+                <a asp-page="/Index" class="text-gray-600 hover:text-indigo-600 font-medium">Trang Chủ</a>
+                <a asp-page="/AllProducts" class="text-gray-600 hover:text-indigo-600 font-medium">Toàn Bộ Sản Phẩm</a>
+                <a asp-page="/Nam" class="text-gray-600 hover:text-indigo-600 font-medium">Nam</a>
+                <a asp-page="/Nu" class="text-gray-600 hover:text-indigo-600 font-medium">Nữ</a>
+                <a asp-page="/TreEm" class="text-gray-600 hover:text-indigo-600 font-medium">Trẻ Em</a>
+                <a asp-page="/GiamGia" class="text-gray-600 hover:text-indigo-600 font-medium">Giảm Giá</a>
+            </div>
+
+            <!-- Gio hang & Dang nhap -->
+            <div class="flex items-center">
+                <!-- Gio hang -->
+                <a asp-page="/Checkout" class="text-gray-600 hover:text-indigo-600 relative p-2 mr-4">
+                    <i class="fa-solid fa-cart-shopping fa-lg"></i>
+                    @if (cartCount > 0)
+                    {
+                        <span class="absolute top-0 right-0 -mt-1 -mr-1 bg-indigo-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                            @cartCount
+                        </span>
+                    }
+                </a>
+
+                <!-- Khu vuc Dang nhap (Dropdown) -->
+                <div class="hidden md:block p-2" x-data="{ open: false }" @@click.away="open = false">
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <!-- Khi da dang nhap -->
+                        <div class="relative">
+                            <button @@click="open = !open" class="flex items-center text-gray-600 font-medium hover:text-indigo-600">
+                                Chào, @User.Identity.Name!
+                                <i class="fa-solid fa-chevron-down ml-2 text-xs"></i>
+                            </button>
+                            <!-- Dropdown menu -->
+                            <div x-show="open"
+                                 x-transition
+                                 class="absolute right-0 mt-2 w-56 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                                <div class="py-1">
+
+                                    <!-- --- SUA LOGIC O DAY --- -->
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <!-- Admin: Hien thi link Admin Dashboard -->
+                                        <a asp-page="/Admin/Index" class="block px-4 py-2 text-sm text-red-600 font-medium hover:bg-gray-100">Admin Dashboard</a>
+                                    }
+                                    else
+                                    {
+                                        <!-- User: Hien thi link Lich su mua hang (ca nhan) -->
+                                        <a asp-page="/OrderHistory" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Lịch sử mua hàng</a>
+                                    }
+
+                                    <div class="border-t border-gray-100"></div>
+                                    <a asp-page="/Logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Đăng Xuất</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Khi chua dang nhap -->
+                        <a asp-page="/Login" class="text-gray-600 hover:text-indigo-600 font-medium">
+                            <i class="fa-solid fa-user mr-1"></i>
+                            Đăng Nhập
+                        </a>
+                    }
+                </div>
+
+                <!-- Nut Mobile -->
+                <button id="mobile-menu-button" class="md:hidden ml-3 p-2 text-gray-600 hover:text-indigo-600">
+                    <i class="fa-solid fa-bars fa-lg"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Menu Mobile -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200">
+            <a asp-page="/Index" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">Trang Chủ</a>
+            <a asp-page="/AllProducts" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">Toàn Bộ Sản Phẩm</a>
+            <a asp-page="/Nam" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">Nam</a>
+            <a asp-page="/Nu" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">Nữ</a>
+            <a asp-page="/TreEm" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">Trẻ Em</a>
+            <a asp-page="/GiamGia" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">Giảm Giá</a>
+            <a asp-page="/Checkout" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">
+                <i class="fa-solid fa-cart-shopping mr-2"></i>
+                Giỏ Hàng (@cartCount)
+            </a>
+
+            <!-- Link Dang nhap/Dang xuat (Mobile) -->
+            <div class="block px-4 py-3 text-gray-600 border-t">
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <span class="font-medium">Chào, @User.Identity.Name!</span>
+                    <a asp-page="/Logout" class="ml-2 text-indigo-600 hover:text-indigo-800 font-medium">(Đăng Xuất)</a>
+
+                    <!-- --- SUA LOGIC O DAY (MOBILE) --- -->
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-page="/Admin/Index" class="block mt-3 text-red-600 font-bold hover:text-red-800">
+                            <i class="fa-solid fa-cogs mr-2"></i>
+                            Admin Dashboard
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-page="/OrderHistory" class="block mt-3 text-gray-700 hover:text-indigo-600">
+                            <i class="fa-solid fa-history mr-2"></i>
+                            Lịch sử mua hàng
+                        </a>
+                    }
+                    <!-- --- KET THUC SUA --- -->
+                }
+                else
+                {
+                    <a asp-page="/Login" class="hover:bg-gray-100 hover:text-indigo-600">
+                        <i class="fa-solid fa-user mr-2"></i>
+                        Đăng Nhập
+                    </a>
+                }
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow @pageBackgroundColor">
+        @RenderBody()
+    </main>
+
+    <footer class="bg-gray-900 text-gray-300 mt-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                &copy; @DateTime.Now.Year ShoeVibe. Đã đăng ký bản quyền.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // (script mobile giu nguyen)
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                const icon = mobileMenuButton.querySelector('i');
+                if (mobileMenu.classList.contains('hidden')) {
+                    icon.classList.remove('fa-xmark');
+                    icon.classList.add('fa-bars');
+                } else {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-xmark');
+                }
+            });
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

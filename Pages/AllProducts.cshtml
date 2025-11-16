@@ -1,0 +1,30 @@
+﻿@page
+@model ShoeShop.Pages.AllProductsModel
+@{
+    ViewData["Title"] = "Tất Cả Sản Phẩm";
+    ViewData["BackgroundColor"] = "bg-white"; // Đặt nền trắng
+}
+
+<div class="bg-white">
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+
+        <h2 class="text-3xl font-extrabold tracking-tight text-gray-900 text-center">
+            Tất Cả Sản Phẩm
+        </h2>
+        <p class="mt-4 text-base text-gray-500 text-center">
+            Khám phá toàn bộ 32 sản phẩm tại cửa hàng của chúng tôi.
+        </p>
+
+        <!-- Vòng lặp hiển thị TẤT CẢ 32 sản phẩm -->
+        <div class="mt-10 grid grid-cols-1 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+
+            @foreach (var product in Model.Products)
+            {
+                <!-- Sử dụng Partial View đã sửa lỗi cân xứng ảnh -->
+                <partial name="Shared/_ProductCard" model="product" />
+            }
+
+        </div> <!-- Kết thúc grid -->
+
+    </div>
+</div>

@@ -1,0 +1,62 @@
+﻿@page
+@model ShoeShop.Pages.Admin.AllOrdersModel
+@{
+    ViewData["Title"] = "Lịch sử Mua Hàng (Tất cả User)";
+}
+
+<!-- Trang này sẽ dùng layout Admin (tự động) -->
+@if (Model.Orders.Any())
+{
+    <div class="space-y-8">
+        @foreach (var order in Model.Orders)
+        {
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                <!-- Thong tin don hang (ID, Ngay, User) -->
+                <div class="bg-gray-50 rounded-t-lg py-4 px-6 border-b border-gray-200 md:flex md:items-center md:justify-between">
+                    <div>
+                        <h2 class="text-lg font-medium text-gray-900">
+                            Đơn hàng #@order.Id
+                        </h2>
+                        <p class="text-sm text-gray-600 mt-1">
+                            Khách hàng: <span class="font-medium text-gray-800">@order.User?.Username</span> (@order.User?.Email)
+                        </p>
+                        <p class="text-sm text-gray-600 mt-1">
+                            Đặt lúc: @order.OrderDate.ToString("dd/MM/yyyy, h:mm tt")
+                        </p>
+                    </div>
+                    <p class="text-lg font-medium text-gray-900 mt-2 md:mt-0">
+                        Tổng tiền: @order.TotalAmount.ToString("N0") ₫
+                    </p>
+                </div>
+
+                <!-- San pham trong don hang -->
+                <ul role="list" class="divide-y divide-gray-200 px-6">
+                    @foreach (var item in order.OrderItems)
+                    {
+                        <li class="flex py-6">
+                            <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                <img src="@item.Product?.ImageUrl" alt="@item.Product?.Name" class="h-full w-full object-cover object-center">
+                            </div>
+                            <div class="ml-4 flex flex-1 flex-col">
+                                <h4 class="text-sm font-medium text-gray-900">@item.Product?.Name</h4>
+                                <p class="mt-1 text-sm text-gray-500">Số lượng: @item.Quantity</p>
+                                <p class="mt-1 text-sm text-gray-500">Giá: @item.PricePaid.ToString("N0") ₫</p>
+                            </div>
+                        </li>
+                    }
+                </ul>
+
+                <!-- Dia chi -->
+                <div class="border-t border-gray-200 py-4 px-6 bg-gray-50 rounded-b-lg">
+                    <h3 class="text-base font-medium text-gray-900">Thông tin giao hàng</h3>
+                    <p class="text-sm text-gray-600 mt-2">@order.ShippingAddress</p>
+                    <p class="text-sm text-gray-600 mt-1">Phương thức: @order.PaymentMethod</p>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>Chưa có đơn hàng nào trong hệ thống.</p>
+}

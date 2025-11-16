@@ -1,0 +1,160 @@
+﻿@page
+@model ShoeShop.Pages.CheckoutModel
+@{
+    ViewData["Title"] = "Thanh Toán";
+}
+
+<div class="bg-white">
+    <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+
+        <div class="mb-8">
+            <a asp-page="/Index" class="text-sm font-medium text-blue-600 hover:text-blue-500">
+                &larr; Trở về trang chủ (Mua thêm)
+            </a>
+        </div>
+
+        <div class="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16">
+
+            <!-- 1. COT BEN TRAI: FORM GIAO HANG & THANH TOAN (Giu nguyen) -->
+            <div>
+                <form method="post" class="mt-6 grid grid-cols-1 gap-y-6" x-data="{ paymentMethod: '@Model.PaymentMethod' }">
+                    <h2 class="text-lg font-medium text-gray-900">Shipping address</h2>
+                    <p class="mt-1 text-sm text-gray-600">Điền thông tin nhận hàng của bạn.</p>
+
+                    <!-- Form (Name, Telephone, Address) -->
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Họ và tên</label>
+                        <div class="mt-1">
+                            <input type="text" asp-for="Name" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <span asp-validation-for="Name" class="text-red-600 text-sm"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="telephone" class="block text-sm font-medium text-gray-700">Số điện thoại</label>
+                        <div class="mt-1">
+                            <input type="text" asp-for="Telephone" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <span asp-validation-for="Telephone" class="text-red-600 text-sm"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="address" class="block text-sm font-medium text-gray-700">Địa chỉ</label>
+                        <div class="mt-1">
+                            <input type="text" asp-for="Address" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <span asp-validation-for="Address" class="text-red-600 text-sm"></span>
+                        </div>
+                    </div>
+
+                    <!-- Phuong thuc thanh toan (Giu nguyen) -->
+                    <div class="mt-8 pt-8 border-t border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Phương thức thanh toán</h2>
+                        <fieldset class="mt-4">
+                            <div class="space-y-4">
+                                <div class="flex items-center">
+                                    <input id="payment-cod" asp-for="PaymentMethod" type="radio" value="cod" x-model="paymentMethod" class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <label for="payment-cod" class="ml-3 block text-sm font-medium text-gray-700">Thanh toán khi nhận hàng (COD)</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="payment-qr" asp-for="PaymentMethod" type="radio" value="qr" x-model="paymentMethod" class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <label for="payment-qr" class="ml-3 block text-sm font-medium text-gray-700">Thanh toán bằng mã QR</label>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div x-show="paymentMethod === 'qr'" x-transition class="mt-6 p-4 border rounded-md bg-gray-50 flex justify-center">
+                            <img src="/images/qr_thanh_toan.png" alt="Mã QR Thanh Toán" class="rounded-md w-64 h-64">
+                        </div>
+                    </div>
+
+                    <!-- Nut Thanh Toan (Giu nguyen) -->
+                    <div class="mt-8 pt-8 border-t border-gray-200">
+                        <button type="submit" class="w-full bg-blue-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Thanh Toán
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!--
+                2. COT BEN PHAI: GIO HANG (DA CAP NHAT)
+            -->
+            <div class="mt-10 lg:mt-0">
+                <h2 class="text-lg font-medium text-gray-900">Your cart</h2>
+
+                <div class="mt-4 rounded-lg border border-gray-200 bg-white shadow-sm">
+                    <ul role="list" class="divide-y divide-gray-200">
+
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <li class="flex py-6 px-4 sm:px-6">
+                                <div class="flex-shrink-0">
+                                    <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="w-20 rounded-md">
+                                </div>
+                                <div class="ml-6 flex flex-1 flex-col">
+                                    <div class="flex">
+                                        <div class="min-w-0 flex-1">
+                                            <h4 class="text-sm font-medium text-gray-900">@item.Product.Name</h4>
+                                            <p class="mt-1 text-sm text-gray-500">Số lượng: @item.Quantity</p>
+                                        </div>
+                                    </div>
+
+                                    <!--
+                                        --- SUA LOGIC HIEN THI GIA O DAY ---
+                                    -->
+                                    <div class="flex flex-1 items-end justify-between pt-2">
+                                        @if (item.OriginalTotalPrice.HasValue && item.OriginalTotalPrice > item.TotalPrice)
+                                        {
+                                            <!-- Hien thi 2 gia (giam gia) -->
+                                            <div class="text-right">
+                                                <p class="text-sm font-medium text-red-600">@item.TotalPrice.ToString("N0") ₫</p>
+                                                <p class="text-xs text-gray-500 line-through">@item.OriginalTotalPrice.Value.ToString("N0") ₫</p>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <!-- Hien thi gia thuong -->
+                                            <p class="text-sm font-medium text-gray-900">@item.TotalPrice.ToString("N0") ₫</p>
+                                        }
+                                    </div>
+                                    <!-- --- KET THUC SUA --- -->
+
+                                </div>
+                            </li>
+                        }
+                    </ul>
+
+                    <!--
+                        --- SUA PHAN TINH TIEN ---
+                    -->
+                    <dl class="space-y-4 border-t border-gray-200 py-6 px-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <dt class="text-sm">Tạm tính (Subtotal)</dt>
+                            <dd class="text-sm font-medium text-gray-900">@Model.Subtotal.ToString("N0") ₫</dd>
+                        </div>
+
+                        <!-- Them dong "Tiet kiem" (neu co) -->
+                        @if (Model.TotalSavings > 0)
+                        {
+                            <div class="flex items-center justify-between text-green-600">
+                                <dt class="text-sm">Bạn đã tiết kiệm</dt>
+                                <dd class="text-sm font-medium">- @Model.TotalSavings.ToString("N0") ₫</dd>
+                            </div>
+                        }
+
+                        <div class="flex items-center justify-between">
+                            <dt class="text-sm">Phí vận chuyển (Shipping)</dt>
+                            <dd class="text-sm font-medium text-gray-900">@Model.Shipping.ToString("N0") ₫</dd>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-gray-200 pt-4">
+                            <dt class="text-base font-medium">Tổng cộng (Total)</dt>
+                            <dd class="text-base font-medium text-gray-900">@Model.Total.ToString("N0") ₫</dd>
+                        </div>
+                    </dl>
+                    <!-- --- KET THUC SUA --- -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="//unpkg.com/alpinejs" defer></script>
+}

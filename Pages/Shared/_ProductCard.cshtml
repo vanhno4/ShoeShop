@@ -1,0 +1,72 @@
+﻿@model ShoeShop.Data.Product
+
+<div class="group relative bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-col">
+
+    <!-- Link ảnh (trỏ đến trang chi tiết) -->
+    <a asp-page="/Detail" asp-route-id="@Model.Id">
+        <div class="w-full overflow-hidden bg-gray-100" style="aspect-ratio: 1 / 1;">
+            <img src="@(Model.ImageUrl ?? "https://placehold.co/600x600/E0E0E0/B0B0B0?text=No+Image")"
+                 onerror="this.onerror=null;this.src='https://placehold.co/600x600/E0E0E0/B0B0B0?text=Error';"
+                 alt="@Model.Name"
+                 class="w-full h-full object-cover object-center group-hover:opacity-75 transition-opacity duration-300">
+        </div>
+    </a>
+
+    <!-- Nội dung thẻ -->
+    <div class="p-4 space-y-2 flex flex-col flex-grow">
+
+        <!-- Tên sản phẩm (Link trỏ đến trang chi tiết) -->
+        <h3 class="text-sm font-medium text-gray-900">
+            <a asp-page="/Detail" asp-route-id="@Model.Id" class="hover:underline">
+                @Model.Name
+            </a>
+        </h3>
+
+        <p class="text-sm text-gray-500">
+            @Model.Category
+        </p>
+
+        <!--
+            --- SỬA LOGIC HIỂN THỊ GIÁ ---
+        -->
+        @if (Model.OriginalPrice.HasValue && Model.OriginalPrice > Model.Price)
+        {
+            <!-- Nếu có giá gốc (sản phẩm giảm giá) -->
+            <div class="flex items-baseline space-x-2">
+                <!-- Giá đã giảm (màu đỏ) -->
+                <p class="text-xl font-semibold text-red-600">
+                    @Model.Price.ToString("N0") ₫
+                </p>
+                <!-- Giá gốc (bị gạch) -->
+                <p class="text-sm text-gray-500 line-through">
+                    @Model.OriginalPrice.Value.ToString("N0") ₫
+                </p>
+            </div>
+        }
+        else
+        {
+            <!-- Nếu không có giá gốc (sản phẩm thường) -->
+            <p class="text-lg font-semibold text-gray-900">
+                @Model.Price.ToString("N0") ₫
+            </p>
+        }
+        <!-- --- KẾT THÚC SỬA --- -->
+        <!-- Nút "Thêm vào giỏ" (đẩy xuống dưới) -->
+        <div class="mt-auto pt-4">
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <a asp-page="/AddToCart" asp-route-id="@Model.Id"
+                   class="block w-full bg-blue-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors text-center">
+                    Thêm vào giỏ
+                </a>
+            }
+            else
+            {
+                <a asp-page="/Login"
+                   class="block w-full bg-blue-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors text-center">
+                    Thêm vào giỏ
+                </a>
+            }
+        </div>
+    </div>
+</div>

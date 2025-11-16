@@ -1,0 +1,85 @@
+﻿@page
+@model ShoeShop.Pages.OrderHistoryModel
+@{
+    ViewData["Title"] = "Lịch Sử Mua Hàng";
+    ViewData["BackgroundColor"] = "bg-gray-50";
+}
+
+<div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold tracking-tight text-gray-900 mb-8">
+        Lịch sử mua hàng
+    </h1>
+
+    @if (Model.Orders.Any())
+    {
+        <div class="space-y-12">
+            <!-- Lap qua tung don hang -->
+            @foreach (var order in Model.Orders)
+            {
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <!-- Thong tin don hang (ID, Ngay, Dia chi) -->
+                    <div class="bg-gray-50 rounded-t-lg py-4 px-6 border-b border-gray-200 md:flex md:items-center md:justify-between">
+                        <div>
+                            <h2 class="text-lg font-medium text-gray-900">
+                                Đơn hàng #@order.Id
+                            </h2>
+                            <p class="text-sm text-gray-600 mt-1">
+                                Đặt lúc: @order.OrderDate.ToString("dd/MM/yyyy, h:mm tt")
+                            </p>
+                        </div>
+                        <p class="text-lg font-medium text-gray-900 mt-2 md:mt-0">
+                            Tổng tiền: @order.TotalAmount.ToString("N0") ₫
+                        </p>
+                    </div>
+
+                    <!-- San pham trong don hang -->
+                    <ul role="list" class="divide-y divide-gray-200 px-6">
+                        @foreach (var item in order.OrderItems)
+                        {
+                            <li class="flex py-6">
+                                <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                    <img src="@item.Product?.ImageUrl" alt="@item.Product?.Name" class="h-full w-full object-cover object-center">
+                                </div>
+
+                                <div class="ml-4 flex flex-1 flex-col">
+                                    <div>
+                                        <div class="flex justify-between text-base font-medium text-gray-900">
+                                            <h3>
+                                                @item.Product?.Name
+                                            </h3>
+                                            <!-- Khong hien thi gia -->
+                                        </div>
+                                        <p class="mt-1 text-sm text-gray-500">@item.Product?.Category</p>
+                                    </div>
+                                    <div class="flex flex-1 items-end justify-between text-sm">
+                                        <p class="text-gray-500">Số lượng: @item.Quantity</p>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+
+                    <!-- Hien thi dia chi (neu co) -->
+                    <div class="border-t border-gray-200 py-4 px-6">
+                        <h3 class="text-base font-medium text-gray-900">Thông tin giao hàng</h3>
+                        <p class="text-sm text-gray-600 mt-2">@order.ShippingAddress</p>
+                        <p class="text-sm text-gray-600 mt-1">Phương thức: @order.PaymentMethod</p>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <!-- Neu chua co don hang nao -->
+        <div class="text-center bg-white p-12 rounded-lg border">
+            <h2 class="text-xl font-medium text-gray-900">Bạn chưa có đơn hàng nào</h2>
+            <p class="mt-2 text-sm text-gray-600">Hãy bắt đầu mua sắm ngay thôi!</p>
+            <div class="mt-6">
+                <a asp-page="/Index" class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">
+                    Quay về Trang Chủ
+                </a>
+            </div>
+        </div>
+    }
+</div>

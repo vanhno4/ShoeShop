@@ -1,0 +1,51 @@
+﻿@page
+@model ShoeShop.Pages.MyOrderModel
+@{
+    ViewData["Title"] = "Đơn Hàng Của Tôi";
+}
+
+<div class="bg-white">
+    <div class="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+
+        <h1 class="text-3xl font-bold tracking-tight text-gray-900">Đơn hàng của tôi</h1>
+        <p class="mt-2 text-sm text-gray-600">Đây là các sản phẩm bạn vừa thanh toán thành công.</p>
+
+        <div class="mt-8">
+            <div class="flow-root">
+                <ul role="list" class="-my-6 divide-y divide-gray-200">
+
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <li class="flex py-6">
+                            <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="h-full w-full object-cover object-center">
+                            </div>
+
+                            <div class="ml-4 flex flex-1 flex-col">
+                                <div>
+                                    <div class="flex justify-between text-base font-medium text-gray-900">
+                                        <h3>
+                                            @item.Product.Name
+                                        </h3>
+                                        <!-- ĐÃ BỎ GIÁ TIỀN -->
+                                    </div>
+                                    <p class="mt-1 text-sm text-gray-500">@item.Product.Category</p>
+                                </div>
+                                <div class="flex flex-1 items-end justify-between text-sm">
+                                    <p class="text-gray-500">Số lượng: @item.Quantity</p>
+                                </div>
+                            </div>
+                        </li>
+                    }
+
+                </ul>
+            </div>
+        </div>
+
+        <div class="mt-10">
+            <a asp-page="/Index" class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">
+                Quay về Trang Chủ
+            </a>
+        </div>
+    </div>
+</div>

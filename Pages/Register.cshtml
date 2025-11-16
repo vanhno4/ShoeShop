@@ -1,0 +1,82 @@
+﻿@page
+@model ShoeShop.Pages.RegisterModel
+@{
+    ViewData["Title"] = "Tạo Tài Khoản";
+}
+
+<div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md space-y-8 bg-white p-10 shadow-lg rounded-lg border border-gray-200">
+        <div>
+            <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+                Tạo tài khoản mới
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Đã có tài khoản?
+                <a asp-page="/Login" class="font-medium text-blue-600 hover:text-blue-500">
+                    Đăng nhập ngay
+                </a>
+            </p>
+        </div>
+
+        <!-- Sửa <form> để nó biết về các "handler" -->
+        <form class="mt-8 space-y-6" method="post">
+
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="rounded-md bg-red-50 p-4">
+                    <div class="flex">
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">@Model.ErrorMessage</h3>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="space-y-4 rounded-md shadow-sm">
+                <!-- Ô Email -->
+                <div>
+                    <label asp-for="Email" class="sr-only">Email</label>
+                    <input asp-for="Email" class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="Email (phải là @@gmail.com)">
+                    <span asp-validation-for="Email" class="text-red-600 text-sm"></span>
+                </div>
+
+                <!-- Ô Username -->
+                <div>
+                    <label asp-for="Username" class="sr-only">Tên đăng nhập</label>
+                    <input asp-for="Username" class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="Tên đăng nhập (ít nhất 3 ký tự)">
+                    <span asp-validation-for="Username" class="text-red-600 text-sm"></span>
+                </div>
+
+                <!-- Ô Mật khẩu -->
+                <div>
+                    <label asp-for="Password" class="sr-only">Mật khẩu</label>
+                    <input asp-for="Password" class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="Mật khẩu (ít nhất 6 ký tự)">
+                    <span asp-validation-for="Password" class="text-red-600 text-sm"></span>
+                </div>
+
+                <!-- Ô Nhập lại Mật khẩu -->
+                <div>
+                    <label asp-for="ConfirmPassword" class="sr-only">Nhập lại mật khẩu</label>
+                    <input asp-for="ConfirmPassword" class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="Nhập lại mật khẩu">
+                    <span asp-validation-for="ConfirmPassword" class="text-red-600 text-sm"></span>
+                </div>
+            </div>
+
+            <!-- --- SỬA LOGIC NÚT BẤM --- -->
+            <div class="space-y-4">
+                <!-- Nút Đăng Ký (User) - Nút chính, màu xanh -->
+                <button type="submit" asp-page-handler="User"
+                        class="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-3 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Đăng Ký
+                </button>
+
+                <!-- Nút Đăng Ký (Admin) - Nút phụ, màu xám -->
+                <button type="submit" asp-page-handler="Admin"
+                        class="group relative flex w-full justify-center rounded-md border border-gray-300 bg-gray-100 py-3 px-4 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                    Đăng ký với vai trò Admin
+                </button>
+            </div>
+            <!-- --- KẾT THÚC SỬA --- -->
+        </form>
+    </div>
+</div>
