@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using ShoeShop.Data;
 using Microsoft.EntityFrameworkCore;
-// (Xóa các 'using' về Authentication vì chúng ta không tự đăng nhập nữa)
 
 namespace ShoeShop.Pages
 {
@@ -16,7 +15,6 @@ namespace ShoeShop.Pages
             _context = context;
         }
 
-        // Các thuộc tính BindProperty này được dùng chung cho cả 2 nút
         [BindProperty]
         [Required(ErrorMessage = "Email là bắt buộc")]
         [EmailAddress]
@@ -45,7 +43,7 @@ namespace ShoeShop.Pages
 
         public void OnGet() { }
 
-        // --- TẠO LOGIC CHUNG ĐỂ TRÁNH LẶP CODE ---
+        // Logic chung de dang ky
         private async Task<IActionResult> RegisterUser(string role)
         {
             if (!ModelState.IsValid)
@@ -53,13 +51,13 @@ namespace ShoeShop.Pages
                 return Page();
             }
 
+            // (Kiem tra Email/Username trung lap...)
             var existingEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email == Email);
             if (existingEmail != null)
             {
                 ErrorMessage = "Email này đã được sử dụng.";
                 return Page();
             }
-
             var existingUsername = await _context.Users.FirstOrDefaultAsync(u => u.Username == Username);
             if (existingUsername != null)
             {
@@ -69,28 +67,30 @@ namespace ShoeShop.Pages
 
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(Password);
 
+            // --- SỬA LOGIC Ở ĐÂY ---
             var newUser = new User
             {
                 Email = Email,
                 Username = Username,
                 PasswordHash = hashedPassword,
-                Role = role // <-- Gán vai trò
+                Role = role,
+                CreatedAt = DateTime.Now // <-- Thêm ngày tham gia
             };
+            // --- KẾT THÚC SỬA ---
 
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            // Chuyển hướng đến Trang Đăng Nhập
             return RedirectToPage("/Login");
         }
 
-        // --- Logic cho nút "Đăng Ký" (vai trò User) ---
+        // Logic cho nut "Đăng Ký" (User)
         public async Task<IActionResult> OnPostUserAsync()
         {
             return await RegisterUser("User");
         }
 
-        // --- Logic cho nút "Đăng ký Admin" ---
+        // Logic cho nut "Đăng ký Admin"
         public async Task<IActionResult> OnPostAdminAsync()
         {
             return await RegisterUser("Admin");

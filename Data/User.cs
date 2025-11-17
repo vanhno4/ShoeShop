@@ -21,9 +21,12 @@ namespace ShoeShop.Data
         [Required]
         public string PasswordHash { get; set; } = string.Empty;
 
+        [Required]
+        public string Role { get; set; } = string.Empty;
+
         // --- DÒNG MỚI ĐÃ THÊM ---
         [Required]
-        public string Role { get; set; } = string.Empty; // Sẽ lưu "Admin" hoặc "User"
+        public DateTime CreatedAt { get; set; } // Ngày tham gia
         // --- KẾT THÚC THÊM ---
     }
 }

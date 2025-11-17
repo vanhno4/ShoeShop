@@ -38,13 +38,29 @@
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen">
     <header class="bg-white shadow-md sticky top-0 z-50">
+        <!-- (Phần Header không thay đổi, giữ nguyên) -->
         <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
 
-            <!-- Logo -->
-            <a asp-page="/Index" class="text-3xl font-bold text-gray-900">
-                <i class="fa-solid fa-shoe-prints mr-2 text-indigo-600"></i>
-                Shoe<span class="text-indigo-600">Vibe</span>
-            </a>
+            <!-- Logo & Link đặc biệt -->
+            <div class="flex items-center space-x-6">
+                <!-- Logo -->
+                <a asp-page="/Index" class="text-3xl font-bold text-gray-900">
+                    <i class="fa-solid fa-shoe-prints mr-2 text-indigo-600"></i>
+                    Shoe<span class="text-indigo-600">Vibe</span>
+                </a>
+
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-page="/Admin/Index" class="hidden md:block text-red-600 font-bold hover:text-red-800">Admin Dashboard</a>
+                    }
+                    else
+                    {
+                        <a asp-page="/OrderHistory" class="hidden md:block text-gray-600 hover:text-indigo-600 font-medium">Lịch sử mua hàng</a>
+                    }
+                }
+            </div>
 
             <!-- Menu chinh (Desktop) -->
             <div class="hidden md:flex items-center space-x-6">
@@ -85,15 +101,12 @@
                                  class="absolute right-0 mt-2 w-56 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
                                 <div class="py-1">
 
-                                    <!-- --- SUA LOGIC O DAY --- -->
                                     @if (User.IsInRole("Admin"))
                                     {
-                                        <!-- Admin: Hien thi link Admin Dashboard -->
                                         <a asp-page="/Admin/Index" class="block px-4 py-2 text-sm text-red-600 font-medium hover:bg-gray-100">Admin Dashboard</a>
                                     }
                                     else
                                     {
-                                        <!-- User: Hien thi link Lich su mua hang (ca nhan) -->
                                         <a asp-page="/OrderHistory" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Lịch sử mua hàng</a>
                                     }
 
@@ -120,8 +133,9 @@
             </div>
         </nav>
 
-        <!-- Menu Mobile -->
+        <!-- Menu Mobile (Không thay đổi) -->
         <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200">
+            <!-- (Nội dung menu mobile giữ nguyên) -->
             <a asp-page="/Index" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">Trang Chủ</a>
             <a asp-page="/AllProducts" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">Toàn Bộ Sản Phẩm</a>
             <a asp-page="/Nam" class="block px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-indigo-600">Nam</a>
@@ -132,15 +146,11 @@
                 <i class="fa-solid fa-cart-shopping mr-2"></i>
                 Giỏ Hàng (@cartCount)
             </a>
-
-            <!-- Link Dang nhap/Dang xuat (Mobile) -->
             <div class="block px-4 py-3 text-gray-600 border-t">
                 @if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
                     <span class="font-medium">Chào, @User.Identity.Name!</span>
                     <a asp-page="/Logout" class="ml-2 text-indigo-600 hover:text-indigo-800 font-medium">(Đăng Xuất)</a>
-
-                    <!-- --- SUA LOGIC O DAY (MOBILE) --- -->
                     @if (User.IsInRole("Admin"))
                     {
                         <a asp-page="/Admin/Index" class="block mt-3 text-red-600 font-bold hover:text-red-800">
@@ -155,7 +165,6 @@
                             Lịch sử mua hàng
                         </a>
                     }
-                    <!-- --- KET THUC SUA --- -->
                 }
                 else
                 {
@@ -172,13 +181,69 @@
         @RenderBody()
     </main>
 
+    <!--
+        --- SỬA LẠI FOOTER ---
+        (Sửa link "Về Chúng Tôi")
+    -->
     <footer class="bg-gray-900 text-gray-300 mt-16">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+
+                <!-- Cot 1: Gioi thieu -->
+                <div>
+                    <a asp-page="/Index" class="text-3xl font-bold text-white flex items-center">
+                        <i class="fa-solid fa-shoe-prints mr-2 text-indigo-400"></i>
+                        Shoe<span class="text-indigo-400">Vibe</span>
+                    </a>
+                    <p class="text-gray-400 mt-4 text-sm">
+                        Mang đến phong cách và sự thoải mái cho mỗi bước chân của bạn.
+                    </p>
+                </div>
+
+                <!-- Cot 2: Lien ket nhanh -->
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Liên Kết Nhanh</h4>
+                    <ul class="space-y-2">
+                        <li><a asp-page="/AllProducts" class="text-gray-400 hover:text-indigo-400 text-sm">Tất Cả Sản Phẩm</a></li>
+                        <li><a asp-page="/GiamGia" class="text-gray-400 hover:text-indigo-400 text-sm">Giảm Giá</a></li>
+                        <li><a asp-page="/Profile" class="text-gray-400 hover:text-indigo-400 text-sm">Tài Khoản</a></li>
+
+                        <!-- --- SỬA DÒNG NÀY --- -->
+                        <li><a asp-page="/About" class="text-gray-400 hover:text-indigo-400 text-sm">Về Chúng Tôi</a></li>
+                        <!-- --- KẾT THÚC SỬA --- -->
+                    </ul>
+                </div>
+
+                <!-- Cot 3: Ho tro -->
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Hỗ Trợ</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 text-sm">Câu Hỏi Thường Gặp</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 text-sm">Chính Sách Đổi Trả</a></li>
+                        <li><a asp-page="/OrderHistory" class="text-gray-400 hover:text-indigo-400 text-sm">Theo Dõi Đơn Hàng</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-indigo-400 text-sm">Liên Hệ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Cot 4: Mang xa hoi -->
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Theo Dõi Chúng Tôi</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-indigo-400 text-2xl"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-indigo-400 text-2xl"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-indigo-400 text-2xl"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-indigo-400 text-2xl"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
                 &copy; @DateTime.Now.Year ShoeVibe. Đã đăng ký bản quyền.
             </div>
         </div>
     </footer>
+    <!-- --- KET THUC FOOTER MOI --- -->
+
 
     <script>
         // (script mobile giu nguyen)

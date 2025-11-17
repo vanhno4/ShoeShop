@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ShoeShop.Data
 {
-    // Tệp này CHỈ nên chứa class Product
     public class Product
     {
         [Key]
@@ -28,9 +27,12 @@ namespace ShoeShop.Data
         [Column(TypeName = "decimal(18, 2)")]
         public decimal? OriginalPrice { get; set; }
 
-        // --- DÒNG MỚI ĐÃ THÊM ---
         [Required]
-        public int Stock { get; set; } // Số lượng tồn kho
+        public int Stock { get; set; } // Truong "Stock" cu, bay gio se la TONG ton kho
+
+        // --- DÒNG MỚI ĐÃ THÊM ---
+        // Mot san pham se co NHIEU bien the (size)
+        public List<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
         // --- KẾT THÚC THÊM ---
     }
 }

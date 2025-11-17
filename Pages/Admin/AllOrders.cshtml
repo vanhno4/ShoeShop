@@ -4,14 +4,12 @@
     ViewData["Title"] = "Lịch sử Mua Hàng (Tất cả User)";
 }
 
-<!-- Trang này sẽ dùng layout Admin (tự động) -->
 @if (Model.Orders.Any())
 {
     <div class="space-y-8">
         @foreach (var order in Model.Orders)
         {
             <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
-                <!-- Thong tin don hang (ID, Ngay, User) -->
                 <div class="bg-gray-50 rounded-t-lg py-4 px-6 border-b border-gray-200 md:flex md:items-center md:justify-between">
                     <div>
                         <h2 class="text-lg font-medium text-gray-900">
@@ -23,15 +21,26 @@
                         <p class="text-sm text-gray-600 mt-1">
                             Đặt lúc: @order.OrderDate.ToString("dd/MM/yyyy, h:mm tt")
                         </p>
-                    </div>
-                    <p class="text-lg font-medium text-gray-900 mt-2 md:mt-0">
-                        Tổng tiền: @order.TotalAmount.ToString("N0") ₫
-                    </p>
-                </div>
 
-                <!-- San pham trong don hang -->
+                        <!-- --- THEM TRANG THAI --- -->
+                        <p class="text-sm text-gray-600 mt-1">
+                            Trạng thái:
+                            <span class="font-medium
+                                        @(order.Status == "Đã vận chuyển" ? "text-green-600" :
+                                                                    (order.Status == "Đã hủy" ? "text-red-600" : "text-yellow-600"))">
+                        @order.Status
+                    </span>
+                </p>
+                <!-- --- KET THUC THEM --- -->
+            </div>
+            <p class="text-lg font-medium text-gray-900 mt-2 md:mt-0">
+                Tổng tiền: @order.TotalAmount.ToString("N0") ₫
+            </p>
+        </div>
+
+                <!-- (Phan con lai giu nguyen) -->
                 <ul role="list" class="divide-y divide-gray-200 px-6">
-                    @foreach (var item in order.OrderItems)
+            @foreach (var item in order.OrderItems)
                     {
                         <li class="flex py-6">
                             <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
@@ -45,8 +54,6 @@
                         </li>
                     }
                 </ul>
-
-                <!-- Dia chi -->
                 <div class="border-t border-gray-200 py-4 px-6 bg-gray-50 rounded-b-lg">
                     <h3 class="text-base font-medium text-gray-900">Thông tin giao hàng</h3>
                     <p class="text-sm text-gray-600 mt-2">@order.ShippingAddress</p>

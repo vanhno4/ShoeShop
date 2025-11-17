@@ -9,23 +9,27 @@ namespace ShoeShop.Data
         public int Id { get; set; }
 
         [Required]
-        public int UserId { get; set; } // Liên kết với người dùng
-        public User? User { get; set; } // Liên kết với người dùng
+        public int UserId { get; set; }
+        public User? User { get; set; }
 
         [Required]
-        public DateTime OrderDate { get; set; } // Thời gian thanh toán
+        public DateTime OrderDate { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18, 2)")]
         public decimal TotalAmount { get; set; }
 
         [Required]
-        public string ShippingAddress { get; set; } = string.Empty; // Lưu địa chỉ
+        public string ShippingAddress { get; set; } = string.Empty;
 
         [Required]
-        public string PaymentMethod { get; set; } = string.Empty; // Lưu phương thức (COD/QR)
+        public string PaymentMethod { get; set; } = string.Empty;
 
-        // Một đơn hàng có NHIỀU sản phẩm
+        // --- ĐÂY LÀ DÒNG QUAN TRỌNG ---
+        [Required]
+        public string Status { get; set; } = string.Empty;
+        // --- KẾT THÚC ---
+
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 }

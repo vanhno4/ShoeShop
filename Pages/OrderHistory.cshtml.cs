@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace ShoeShop.Pages
 {
-    [Authorize] // Phai dang nhap moi xem duoc
+    [Authorize]
     public class OrderHistoryModel : PageModel
     {
         private readonly ApplicationDbContext _context;
@@ -17,30 +17,95 @@ namespace ShoeShop.Pages
             _context = context;
         }
 
-        // Danh sach cac don hang de hien thi
         public List<Order> Orders { get; set; } = new List<Order>();
+
+        [TempData]
+        public string? SuccessMessage { get; set; }
+        [TempData]
+        public string? ErrorMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // 1. Lay ID nguoi dung
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!int.TryParse(userIdString, out var userId))
             {
                 return RedirectToPage("/Login");
             }
 
-            // 2. Lay tat ca don hang cua nguoi dung nay tu CSDL
             Orders = await _context.Orders
                 .Where(o => o.UserId == userId)
-                // Bao gom (Include) thong tin cac san pham trong don hang
                 .Include(o => o.OrderItems)
-                // Va bao gom (ThenInclude) thong tin cua chinh san pham do
                 .ThenInclude(oi => oi.Product)
-                // Sap xep don hang moi nhat len dau
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
             return Page();
+        }
+
+        // --- HÀM MỚI ĐỂ HỦY ĐƠN HÀNG ---
+        public async Task<IActionResult> OnPostCancelAsync(int orderId)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdString, out var userId))
+            {
+                return RedirectToPage("/Login"); // Chua dang nhap
+            }
+
+            // Bat dau Giao dich (Transaction)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // 1. Tim don hang (phai la cua user nay)
+                    var order = await _context.Orders
+                        .Include(o => o.OrderItems) // Lay cac san pham
+                        .FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == userId);
+
+                    if (order == null)
+                    {
+                        ErrorMessage = "Không tìm thấy đơn hàng.";
+                        return RedirectToPage();
+                    }
+
+                    // 2. Chi duoc huy neu dang "Cho van chuyen"
+                    if (order.Status != "Đang chờ vận chuyển")
+                    {
+                        ErrorMessage = "Không thể hủy đơn hàng ở trạng thái này.";
+                        return RedirectToPage();
+                    }
+
+                    // 3. HOAN KHO (Cong lai so luong)
+                    foreach (var item in order.OrderItems)
+                    {
+                        var product = await _context.Products.FindAsync(item.ProductId);
+                        if (product != null)
+                        {
+                            product.Stock += item.Quantity; // Cong tra lai so luong
+                            _context.Products.Update(product);
+                        }
+                    }
+
+                    // 4. Cap nhat trang thai don hang
+                    order.Status = "Đã hủy";
+                    _context.Orders.Update(order);
+
+                    // 5. Luu tat ca thay doi (Hoan kho + Huy don)
+                    await _context.SaveChangesAsync();
+
+                    // 6. Hoan tat Giao dich
+                    await transaction.CommitAsync();
+
+                    SuccessMessage = $"Đã hủy thành công đơn hàng #{order.Id}.";
+                }
+                catch (Exception ex)
+                {
+                    // Neu co loi, huy bo tat ca
+                    await transaction.RollbackAsync();
+                    ErrorMessage = "Lỗi khi hủy đơn hàng: " + ex.Message;
+                }
+            }
+
+            return RedirectToPage();
         }
     }
 }

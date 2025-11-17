@@ -1,0 +1,104 @@
+﻿@page
+@model ShoeShop.Pages.AboutModel
+@{
+    ViewData["Title"] = "Về Chúng Tôi";
+    ViewData["BackgroundColor"] = "bg-white";
+}
+
+<div class="bg-white py-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+
+        <!-- Phần Tiêu Đề -->
+        <div class="text-center">
+            <h2 class="text-lg font-semibold text-indigo-600">Về ShoeVibe</h2>
+            <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                Câu chuyện của chúng tôi
+            </p>
+            <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-500">
+                Mang đến phong cách và sự thoải mái cho mỗi bước chân của bạn.
+            </p>
+        </div>
+
+        <!-- Phần Nội Dung (Giới thiệu) -->
+        <div class="mt-16 text-gray-700 text-base leading-7">
+            <p class="mb-4">
+                Chào mừng bạn đến với <strong>ShoeVibe</strong>! Chúng tôi tin rằng một đôi giày tốt có thể đưa bạn đến những nơi tuyệt vời. Được thành lập vào năm 2024, ShoeVibe bắt đầu từ một ý tưởng đơn giản: tạo ra một nơi mà bất kỳ ai cũng có thể tìm thấy đôi giày hoàn hảo, kết hợp giữa phong cách thời thượng, chất lượng bền bỉ và sự thoải mái tối đa.
+            </p>
+            <p class="mb-4">
+                Sứ mệnh của chúng tôi là cung cấp một bộ sưu tập đa dạng, từ những đôi sneaker năng động cho các hoạt động thể thao, những đôi boot cá tính cho đến những đôi giày tây lịch lãm. Chúng tôi làm việc trực tiếp với các nhà sản xuất uy tín để đảm bảo rằng mỗi sản phẩm bạn nhận được đều đạt tiêu chuẩn cao nhất.
+            </p>
+            <p>
+                Tại ShoeVibe, chúng tôi không chỉ bán giày. Chúng tôi bán sự tự tin, sự thoải mái và niềm vui trong mỗi bước đi. Cảm ơn bạn đã tin tưởng và đồng hành cùng chúng tôi!
+            </p>
+        </div>
+
+        <!--
+            Phần Liên Hệ & Bản Đồ
+        -->
+        <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+
+            <!-- Cột 1: Thông tin liên hệ -->
+            <div class="bg-gray-50 p-8 rounded-lg border border-gray-200">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">Liên hệ với chúng tôi</h3>
+
+                <div class="space-y-6">
+                    <!-- Địa chỉ -->
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="fa-solid fa-map-marker-alt text-indigo-600 text-xl w-6"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-medium text-gray-900">Địa chỉ</h4>
+                            <p class="text-gray-600">
+                                218 Lĩnh Nam,<br>
+                                Hoàng Mai, Hà Nội
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Điện thoại -->
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="fa-solid fa-phone text-indigo-600 text-xl w-6"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-medium text-gray-900">Điện thoại</h4>
+                            <p class="text-gray-600">0975920569</p>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="fa-solid fa-envelope text-indigo-600 text-xl w-6"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-medium text-gray-900">Email</h4>
+                            <p class="text-gray-600">vietkeyy98@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cột 2: Bản đồ Google Maps -->
+            <div class="w-full h-96 md:h-full overflow-hidden rounded-lg shadow-lg border border-gray-200">
+                <!--
+                    --- SỬA LỖI Ở ĐÂY ---
+                    1. Bọc trong @("...") để sửa lỗi cú pháp '!'
+                    2. Dùng link "Embed" (Nhúng) thay vì link "Share" (Chia sẻ)
+                -->
+                <iframe src="@("https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3725.183707663229!2d105.87334587590868!3d20.98027638927827!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ad8325fe9061%3A0x17cc9e09d9270e15!2sTr%C6%B0%E1%BB%9Dng%20%C4%90%E1%BA%A1i%20h%E1%BB%8Dc%20Kinh%20t%E1%BA%BF%20-%20K%E1%BB%B9%20thu%E1%BA%ADt%20C%C3%B4ng%20nghi%E1%BB%87p%20(UNETI)%20-%20C%C6%A1%20s%E1%BB%9F%20L%C4%A9nh%20Nam!5e0!3m2!1svi!2s!4v1731813840735!5m2!1svi!2s")"
+                        width="100%"
+                        height="100%"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+                <!-- --- KẾT THÚC SỬA --- -->
+            </div>
+
+        </div>
+
+    </div>
+</div>

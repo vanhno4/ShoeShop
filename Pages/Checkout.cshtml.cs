@@ -119,7 +119,8 @@ namespace ShoeShop.Pages
                         OrderDate = DateTime.Now,
                         TotalAmount = this.Total,
                         PaymentMethod = this.PaymentMethod,
-                        ShippingAddress = $"{Name}, {Telephone}, {Address}"
+                        ShippingAddress = $"{Name}, {Telephone}, {Address}",
+                        Status = "Đang chờ vận chuyển"
                     };
 
                     // 3. TRU HANG TON KHO va them vao Don Hang

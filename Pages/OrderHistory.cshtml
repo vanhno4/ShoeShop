@@ -1,23 +1,36 @@
 ﻿@page
 @model ShoeShop.Pages.OrderHistoryModel
 @{
-    ViewData["Title"] = "Lịch Sử Mua Hàng";
+    ViewData["Title"] = "Lịch Sử Mua Hàng Của Bạn";
     ViewData["BackgroundColor"] = "bg-gray-50";
 }
 
 <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
     <h1 class="text-3xl font-bold tracking-tight text-gray-900 mb-8">
-        Lịch sử mua hàng
+        Lịch sử mua hàng của bạn
     </h1>
+
+    <!-- Hien thi thong bao (Neu co) -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="rounded-md bg-green-50 p-4 mb-6">
+            <h3 class="text-sm font-medium text-green-800">@Model.SuccessMessage</h3>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="rounded-md bg-red-50 p-4 mb-6">
+            <h3 class="text-sm font-medium text-red-800">@Model.ErrorMessage</h3>
+        </div>
+    }
 
     @if (Model.Orders.Any())
     {
         <div class="space-y-12">
-            <!-- Lap qua tung don hang -->
             @foreach (var order in Model.Orders)
             {
                 <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
-                    <!-- Thong tin don hang (ID, Ngay, Dia chi) -->
+                    <!-- Thong tin don hang -->
                     <div class="bg-gray-50 rounded-t-lg py-4 px-6 border-b border-gray-200 md:flex md:items-center md:justify-between">
                         <div>
                             <h2 class="text-lg font-medium text-gray-900">
@@ -26,44 +39,59 @@
                             <p class="text-sm text-gray-600 mt-1">
                                 Đặt lúc: @order.OrderDate.ToString("dd/MM/yyyy, h:mm tt")
                             </p>
-                        </div>
-                        <p class="text-lg font-medium text-gray-900 mt-2 md:mt-0">
-                            Tổng tiền: @order.TotalAmount.ToString("N0") ₫
-                        </p>
-                    </div>
 
-                    <!-- San pham trong don hang -->
+                            <!-- --- THEM TRANG THAI --- -->
+                            <p class="text-sm text-gray-600 mt-1">
+                                Trạng thái:
+                                <span class="font-medium
+                                            @(order.Status == "Đã vận chuyển" ? "text-green-600" :
+                                                                            (order.Status == "Đã hủy" ? "text-red-600" : "text-yellow-600"))">
+                            @order.Status
+                        </span>
+                    </p>
+                    <!-- --- KET THUC THEM --- -->
+                </div>
+                <p class="text-lg font-medium text-gray-900 mt-2 md:mt-0">
+                    Tổng tiền: @order.TotalAmount.ToString("N0") ₫
+                </p>
+            </div>
+
+                    <!-- San pham -->
                     <ul role="list" class="divide-y divide-gray-200 px-6">
-                        @foreach (var item in order.OrderItems)
+                @foreach (var item in order.OrderItems)
                         {
                             <li class="flex py-6">
                                 <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                     <img src="@item.Product?.ImageUrl" alt="@item.Product?.Name" class="h-full w-full object-cover object-center">
                                 </div>
-
                                 <div class="ml-4 flex flex-1 flex-col">
-                                    <div>
-                                        <div class="flex justify-between text-base font-medium text-gray-900">
-                                            <h3>
-                                                @item.Product?.Name
-                                            </h3>
-                                            <!-- Khong hien thi gia -->
-                                        </div>
-                                        <p class="mt-1 text-sm text-gray-500">@item.Product?.Category</p>
-                                    </div>
-                                    <div class="flex flex-1 items-end justify-between text-sm">
-                                        <p class="text-gray-500">Số lượng: @item.Quantity</p>
-                                    </div>
+                                    <h4 class="text-sm font-medium text-gray-900">@item.Product?.Name</h4>
+                                    <p class="mt-1 text-sm text-gray-500">Số lượng: @item.Quantity</p>
                                 </div>
                             </li>
                         }
                     </ul>
 
-                    <!-- Hien thi dia chi (neu co) -->
-                    <div class="border-t border-gray-200 py-4 px-6">
-                        <h3 class="text-base font-medium text-gray-900">Thông tin giao hàng</h3>
-                        <p class="text-sm text-gray-600 mt-2">@order.ShippingAddress</p>
-                        <p class="text-sm text-gray-600 mt-1">Phương thức: @order.PaymentMethod</p>
+                    <!-- Dia chi & Nut Huy -->
+                    <div class="border-t border-gray-200 py-4 px-6 bg-gray-50 rounded-b-lg flex justify-between items-center">
+                        <div>
+                            <h3 class="text-base font-medium text-gray-900">Thông tin giao hàng</h3>
+                            <p class="text-sm text-gray-600 mt-2">@order.ShippingAddress</p>
+                        </div>
+
+                        <!-- --- THEM NUT HUY DON --- -->
+                        @if (order.Status == "Đang chờ vận chuyển")
+                        {
+                            <form method="post">
+                                <!-- Nut nay se goi ham OnPostCancelAsync -->
+                                <button type="submit" asp-page-handler="Cancel" asp-route-orderId="@order.Id"
+                                        class="rounded-md bg-red-100 px-3.5 py-2.5 text-sm font-semibold text-red-700 shadow-sm hover:bg-red-200"
+                                        onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không? Hàng sẽ được hoàn về kho.');">
+                                    Hủy đơn hàng
+                                </button>
+                            </form>
+                        }
+                        <!-- --- KET THUC THEM --- -->
                     </div>
                 </div>
             }

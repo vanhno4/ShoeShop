@@ -17,5 +17,6 @@ namespace ShoeShop.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<ProductVariant> ProductVariants { get; set; }
     }
 }

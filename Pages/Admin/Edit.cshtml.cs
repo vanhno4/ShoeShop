@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ShoeShop.Pages.Admin
 {
-    [Authorize(Roles = "Admin")] // Chỉ Admin mới vào được
+    [Authorize(Roles = "Admin")]
     public class EditModel : PageModel
     {
         private readonly ApplicationDbContext _context;
@@ -17,53 +17,91 @@ namespace ShoeShop.Pages.Admin
             _context = context;
         }
 
-        // --- SỬA LỖI Ở ĐÂY ---
-        // Thêm (SupportsGet = true) để cho phép .NET
-        // liên kết (bind) dữ liệu này khi trang được tải (GET request)
         [BindProperty(SupportsGet = true)]
         public Product Product { get; set; } = new Product();
-        // --- KẾT THÚC SỬA ---
+
+        // --- THEM MOI: De luu tru so luong M, L, XL ---
+        [BindProperty]
+        public int StockM { get; set; }
+        [BindProperty]
+        public int StockL { get; set; }
+        [BindProperty]
+        public int StockXL { get; set; }
+        // --- KET THUC THEM ---
 
         [TempData]
         public string SuccessMessage { get; set; } = string.Empty;
 
-        // Hàm OnGet sẽ chạy khi bạn nhấp "Sửa"
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            // Khi tai trang, lay san pham VA cac bien the (Variants)
+            var product = await _context.Products
+                                        .Include(p => p.Variants) // <-- Quan trong
+                                        .FirstOrDefaultAsync(p => p.Id == id);
+
             if (product == null)
             {
                 return RedirectToPage("/Admin/Index");
             }
 
-            Product = product; // Gán sản phẩm tìm được cho BindProperty
+            Product = product;
+
+            // --- THEM MOI: Dien so luong vao cac o input ---
+            StockM = product.Variants.FirstOrDefault(v => v.Size == "M")?.Stock ?? 0;
+            StockL = product.Variants.FirstOrDefault(v => v.Size == "L")?.Stock ?? 0;
+            StockXL = product.Variants.FirstOrDefault(v => v.Size == "XL")?.Stock ?? 0;
+            // --- KET THUC THEM ---
+
             return Page();
         }
 
-        // Hàm OnPost sẽ chạy khi bạn nhấn "Save changes"
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
-                return Page(); // Nếu lỗi, hiển thị lại trang
+                return Page();
             }
 
-            // Đánh dấu sản phẩm là "Đã sửa"
-            _context.Attach(Product).State = EntityState.Modified;
+            // Lay san pham va cac bien the tu CSDL de cap nhat
+            var productInDb = await _context.Products
+                                            .Include(p => p.Variants)
+                                            .FirstOrDefaultAsync(p => p.Id == Product.Id);
+
+            if (productInDb == null)
+            {
+                return NotFound();
+            }
+
+            // Cap nhat Base Information
+            productInDb.Name = Product.Name;
+            productInDb.Description = Product.Description;
+            productInDb.Price = Product.Price;
+            productInDb.OriginalPrice = Product.OriginalPrice;
+
+            // --- THEM MOI: Cap nhat so luong cho tung size ---
+            var variantM = productInDb.Variants.FirstOrDefault(v => v.Size == "M");
+            if (variantM != null) variantM.Stock = StockM;
+
+            var variantL = productInDb.Variants.FirstOrDefault(v => v.Size == "L");
+            if (variantL != null) variantL.Stock = StockL;
+
+            var variantXL = productInDb.Variants.FirstOrDefault(v => v.Size == "XL");
+            if (variantXL != null) variantXL.Stock = StockXL;
+
+            // Cap nhat TONG ton kho (de trang web cu van chay)
+            productInDb.Stock = StockM + StockL + StockXL;
+            // --- KET THUC THEM ---
 
             try
             {
-                // Lưu thay đổi vào CSDL
                 await _context.SaveChangesAsync();
                 SuccessMessage = "Cập nhật sản phẩm thành công!";
             }
             catch (DbUpdateConcurrencyException)
             {
-                // (Xử lý lỗi nếu có)
                 throw;
             }
 
-            // Quay về trang Sửa (để xem kết quả)
             return RedirectToPage(new { id = Product.Id });
         }
     }
