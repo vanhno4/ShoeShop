@@ -1,0 +1,91 @@
+﻿@page
+@model ShoeShop.Pages.Admin.AddProductModel
+@{
+    ViewData["Title"] = "Thêm Sản Phẩm Mới";
+    Layout = "/Pages/Shared/_AdminLayout.cshtml";
+}
+
+<div class="max-w-4xl mx-auto">
+
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Thêm Sản Phẩm Mới</h2>
+        <a asp-page="/Admin/Products" class="text-gray-600 hover:text-gray-900 font-medium">
+            &larr; Quay lại danh sách
+        </a>
+    </div>
+
+    <form method="post" class="bg-white shadow rounded-lg overflow-hidden">
+        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <div class="space-y-6">
+                <h3 class="text-lg font-medium text-gray-900 border-b pb-2">1. Thông tin chung</h3>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tên sản phẩm</label>
+                    <input asp-for="Product.Name" required class="w-full border-gray-300 rounded-md shadow-sm p-3 border focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ví dụ: Giày Nike Air Force 1">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Danh mục</label>
+                    <select asp-for="Product.Category" class="w-full border-gray-300 rounded-md shadow-sm p-3 border">
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                        <option value="Trẻ Em">Trẻ Em</option>
+                        <option value="Giảm Giá">Giảm Giá</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Giá bán</label>
+                        <input asp-for="Product.Price" type="number" required class="w-full border-gray-300 rounded-md shadow-sm p-3 border font-bold text-indigo-600" placeholder="500000">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Giá gốc (Tùy chọn)</label>
+                        <input asp-for="Product.OriginalPrice" type="number" class="w-full border-gray-300 rounded-md shadow-sm p-3 border" placeholder="700000">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Link hình ảnh</label>
+                    <input asp-for="Product.ImageUrl" required class="w-full border-gray-300 rounded-md shadow-sm p-3 border" placeholder="https://...">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
+                    <textarea asp-for="Product.Description" rows="4" class="w-full border-gray-300 rounded-md shadow-sm p-3 border"></textarea>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <h3 class="text-lg font-medium text-gray-900 border-b pb-2">2. Nhập kho ban đầu</h3>
+
+                <div class="bg-indigo-50 p-6 rounded-lg border border-indigo-100">
+                    <p class="text-sm text-indigo-700 mb-4">Hệ thống sẽ tự động tạo 3 size mặc định (M, L, XL) với số lượng dưới đây:</p>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <label class="font-bold text-gray-700">Size M</label>
+                            <input asp-for="StockM" type="number" min="0" class="w-32 border-gray-300 rounded-md shadow-sm p-2 border text-center">
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <label class="font-bold text-gray-700">Size L</label>
+                            <input asp-for="StockL" type="number" min="0" class="w-32 border-gray-300 rounded-md shadow-sm p-2 border text-center">
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <label class="font-bold text-gray-700">Size XL</label>
+                            <input asp-for="StockXL" type="number" min="0" class="w-32 border-gray-300 rounded-md shadow-sm p-2 border text-center">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <button type="submit" class="w-full py-4 px-6 border border-transparent rounded-md shadow-lg text-base font-bold text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition transform hover:-translate-y-1">
+                        <i class="fa-solid fa-check-circle mr-2"></i> Hoàn tất & Thêm sản phẩm
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>

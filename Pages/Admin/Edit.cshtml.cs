@@ -1,43 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Authorization;
 using ShoeShop.Data;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace ShoeShop.Pages.Admin
 {
-    [Authorize(Roles = "Admin")]
     public class EditModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        public EditModel(ApplicationDbContext context) => _context = context;
 
-        public EditModel(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        [BindProperty(SupportsGet = true)]
+        [BindProperty]
         public Product Product { get; set; } = new Product();
 
-        // --- THEM MOI: De luu tru so luong M, L, XL ---
-        [BindProperty]
-        public int StockM { get; set; }
-        [BindProperty]
-        public int StockL { get; set; }
-        [BindProperty]
-        public int StockXL { get; set; }
-        // --- KET THUC THEM ---
-
-        [TempData]
-        public string SuccessMessage { get; set; } = string.Empty;
+        [TempData] public string SuccessMessage { get; set; } = string.Empty;
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            // Khi tai trang, lay san pham VA cac bien the (Variants)
-            var product = await _context.Products
-                                        .Include(p => p.Variants) // <-- Quan trong
-                                        .FirstOrDefaultAsync(p => p.Id == id);
+            var product = await _context.Products.FindAsync(id);
 
             if (product == null)
             {
@@ -45,63 +25,29 @@ namespace ShoeShop.Pages.Admin
             }
 
             Product = product;
-
-            // --- THEM MOI: Dien so luong vao cac o input ---
-            StockM = product.Variants.FirstOrDefault(v => v.Size == "M")?.Stock ?? 0;
-            StockL = product.Variants.FirstOrDefault(v => v.Size == "L")?.Stock ?? 0;
-            StockXL = product.Variants.FirstOrDefault(v => v.Size == "XL")?.Stock ?? 0;
-            // --- KET THUC THEM ---
-
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+            if (!ModelState.IsValid) return Page();
 
-            // Lay san pham va cac bien the tu CSDL de cap nhat
-            var productInDb = await _context.Products
-                                            .Include(p => p.Variants)
-                                            .FirstOrDefaultAsync(p => p.Id == Product.Id);
+            var productInDb = await _context.Products.FindAsync(Product.Id);
+            if (productInDb == null) return NotFound();
 
-            if (productInDb == null)
-            {
-                return NotFound();
-            }
-
-            // Cap nhat Base Information
+            // CHỈ CẬP NHẬT THÔNG TIN CƠ BẢN
             productInDb.Name = Product.Name;
             productInDb.Description = Product.Description;
             productInDb.Price = Product.Price;
             productInDb.OriginalPrice = Product.OriginalPrice;
+            productInDb.ImageUrl = Product.ImageUrl;
+            productInDb.Category = Product.Category;
 
-            // --- THEM MOI: Cap nhat so luong cho tung size ---
-            var variantM = productInDb.Variants.FirstOrDefault(v => v.Size == "M");
-            if (variantM != null) variantM.Stock = StockM;
+            await _context.SaveChangesAsync();
 
-            var variantL = productInDb.Variants.FirstOrDefault(v => v.Size == "L");
-            if (variantL != null) variantL.Stock = StockL;
+            SuccessMessage = "Đã cập nhật thông tin sản phẩm!";
 
-            var variantXL = productInDb.Variants.FirstOrDefault(v => v.Size == "XL");
-            if (variantXL != null) variantXL.Stock = StockXL;
-
-            // Cap nhat TONG ton kho (de trang web cu van chay)
-            productInDb.Stock = StockM + StockL + StockXL;
-            // --- KET THUC THEM ---
-
-            try
-            {
-                await _context.SaveChangesAsync();
-                SuccessMessage = "Cập nhật sản phẩm thành công!";
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
-
+            // Load lại chính trang này để xem kết quả
             return RedirectToPage(new { id = Product.Id });
         }
     }

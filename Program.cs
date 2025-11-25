@@ -22,7 +22,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 var projectRootPath = builder.Environment.ContentRootPath;
-var dbPath = Path.Combine(projectRootPath, "ShoeShop.db");
+var dbPath = Path.Combine(projectRootPath, "ShoeShop_New.db");
 var connectionString = $"Data Source={dbPath}";
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

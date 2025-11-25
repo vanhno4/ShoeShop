@@ -1,0 +1,94 @@
+﻿@page
+@model ShoeShop.Pages.Admin.InventoryModel
+@{
+    ViewData["Title"] = "Quản lý tồn kho";
+    Layout = "/Pages/Shared/_AdminLayout.cshtml";
+}
+
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800">Báo Cáo Tồn Kho</h2>
+            <p class="text-sm text-gray-500">Theo dõi số lượng hàng hóa chi tiết theo Size.</p>
+        </div>
+
+        <div class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-md border border-indigo-200">
+            <span class="font-bold">Tổng sản phẩm:</span> @Model.Products.Count
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 text-sm">
+            <thead class="bg-gray-50 text-gray-600 uppercase font-semibold">
+                <tr>
+                    <th class="py-3 px-4 text-left border-b">Sản phẩm</th>
+                    <th class="py-3 px-4 text-center border-b bg-blue-50 text-blue-800">Size M</th>
+                    <th class="py-3 px-4 text-center border-b bg-green-50 text-green-800">Size L</th>
+                    <th class="py-3 px-4 text-center border-b bg-purple-50 text-purple-800">Size XL</th>
+                    <th class="py-3 px-4 text-center border-b">Tổng</th>
+                    <th class="py-3 px-4 text-center border-b">Trạng thái</th>
+                    <th class="py-3 px-4 text-center border-b">Tác vụ</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                @foreach (var item in Model.Products)
+                {
+                    // Lấy số lượng từng size
+                    var stockM = item.Variants.FirstOrDefault(v => v.Size == "M")?.Stock ?? 0;
+                    var stockL = item.Variants.FirstOrDefault(v => v.Size == "L")?.Stock ?? 0;
+                    var stockXL = item.Variants.FirstOrDefault(v => v.Size == "XL")?.Stock ?? 0;
+                    var total = stockM + stockL + stockXL;
+
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-3 px-4">
+                            <div class="flex items-center">
+                                <img src="@item.ImageUrl" class="h-10 w-10 rounded object-cover border mr-3">
+                                <div>
+                                    <div class="font-bold text-gray-900">@item.Name</div>
+                                    <div class="text-xs text-gray-500">ID: #@item.Id</div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td class="py-3 px-4 text-center font-mono @(stockM < 10 ? "text-red-600 font-bold" : "text-gray-700")">
+                            @stockM
+                        </td>
+
+                        <td class="py-3 px-4 text-center font-mono @(stockL < 10 ? "text-red-600 font-bold" : "text-gray-700")">
+                            @stockL
+                        </td>
+
+                        <td class="py-3 px-4 text-center font-mono @(stockXL < 10 ? "text-red-600 font-bold" : "text-gray-700")">
+                            @stockXL
+                        </td>
+
+                        <td class="py-3 px-4 text-center font-bold text-gray-800">
+                            @total
+                        </td>
+
+                        <td class="py-3 px-4 text-center">
+                            @if (total == 0)
+                            {
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Hết hàng</span>
+                            }
+                            else if (total < 20)
+                            {
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Sắp hết</span>
+                            }
+                            else
+                            {
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Còn hàng</span>
+                            }
+                        </td>
+
+                        <td class="py-3 px-4 text-center">
+                            <a asp-page="/Admin/Stock" asp-route-id="@item.Id" class="text-indigo-600 hover:text-indigo-900 border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded transition flex items-center justify-center mx-auto w-24">
+                                <i class="fa-solid fa-pen-to-square mr-2"></i> Nhập kho
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

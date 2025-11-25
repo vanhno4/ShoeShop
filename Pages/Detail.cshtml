@@ -1,143 +1,155 @@
-﻿@page "/Detail/{id:int}"
+﻿@page "{id:int}"
 @model ShoeShop.Pages.DetailModel
 @{
-    ViewData["Title"] = Model.ProductFound ? Model.Product.Name : "Không Tìm Thấy";
-    ViewData["BackgroundColor"] = "bg-white";
+    ViewData["Title"] = (Model.ProductFound && Model.Product != null) ? Model.Product.Name : "Chi tiết sản phẩm";
 }
 
 <div class="bg-white">
-    <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+    <div class="pt-6 pb-16 sm:pb-24">
 
-        @if (Model.ProductFound)
+        @if (!Model.ProductFound || Model.Product == null)
         {
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-
-                <!-- Cot 1: Hinh anh -->
-                <div class="w-full rounded-lg overflow-hidden">
-                    <img src="@Model.Product.ImageUrl"
-                         alt="@Model.Product.Name"
-                         onerror="this.onerror=null;this.src='https://placehold.co/600x600/E0E0E0/B0B0B0?text=Error';"
-                         class="w-full h-full object-cover object-center">
-                </div>
-
-                <!-- Cot 2: Thong tin -->
-                <div>
-                    <h1 class="text-3xl font-bold tracking-tight text-gray-900">
-                        @Model.Product.Name
-                    </h1>
-
-                    <!-- Hien thi gia (logic 2 gia) -->
-                    @if (Model.Product.OriginalPrice.HasValue && Model.Product.OriginalPrice > Model.Product.Price)
-                    {
-                        <div class="mt-4 flex items-baseline space-x-3">
-                            <p class="text-3xl font-bold tracking-tight text-red-600">
-                                @Model.Product.Price.ToString("N0") ₫
-                            </p>
-                            <p class="text-xl text-gray-500 line-through">
-                                @Model.Product.OriginalPrice.Value.ToString("N0") ₫
-                            </p>
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="text-3xl tracking-tight text-gray-900 mt-4">
-                            @Model.Product.Price.ToString("N0") ₫
-                        </p>
-                    }
-
-                    <!--
-                        --- THEM MOI: HIEN THI SO LUONG ---
-                    -->
-                    <div class="mt-6">
-                        @if (Model.Product.Stock > 0)
-                        {
-                            <p class="text-sm text-gray-700">
-                                Số lượng còn lại: <span class="font-medium text-green-600">@Model.Product.Stock</span>
-                            </p>
-                        }
-                        else
-                        {
-                            <p class="text-sm font-medium text-red-600">
-                                Hết Hàng
-                            </p>
-                        }
-                    </div>
-                    <!-- --- KET THUC THEM --- -->
-                    <!-- Nut Them vao gio -->
-                    <div class="mt-8">
-                        @if (User.Identity != null && User.Identity.IsAuthenticated)
-                        {
-                            // --- SUA LOGIC NUT BAM ---
-                            @if (Model.Product.Stock > 0)
-                            {
-                                <!-- Con hang: Hien nut "Them vao gio" -->
-                                <a asp-page="/AddToCart" asp-route-id="@Model.Product.Id"
-                                   class="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700">
-                                    Thêm vào giỏ
-                                </a>
-                            }
-                            else
-                            {
-                                <!-- Het hang: Hien nut bi mo (disabled) -->
-                                <button type="button" disabled
-                                        class="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-400 px-8 py-3 text-base font-medium text-white cursor-not-allowed">
-                                    Hết Hàng
-                                </button>
-                            }
-                        }
-                        else
-                        {
-                            <!-- Chua dang nhap: Link den /Login (nhu cu) -->
-                            <a asp-page="/Login"
-                               class="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-8 py-3 text-base font-medium text-white hover:bg-blue-700">
-                                Thêm vào giỏ
-                            </a>
-                        }
-                    </div>
-
-                    <!-- Mo ta san pham -->
-                    <div class="mt-8">
-                        <h3 class="text-lg font-medium text-gray-900">Mô tả</h3>
-                        <div class="mt-4 text-base text-gray-600 space-y-6">
-                            <p>@Model.Product.Description</p>
-                        </div>
-                    </div>
-
-                    <div class="mt-8 border-t border-gray-200 pt-8">
-                        <a asp-page="/AllProducts" class="text-sm font-medium text-blue-600 hover:text-blue-500">
-                            &larr; Xem tất cả sản phẩm
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- San pham cung loai -->
-            <div class="mt-24">
-                <h2 class="text-2xl font-bold tracking-tight text-gray-900">Sản phẩm cùng loại</h2>
-                <div class="mt-6 grid grid-cols-1 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-                    @foreach (var product in Model.RelatedProducts)
-                    {
-                        <partial name="Shared/_ProductCard" model="product" />
-                    }
-                </div>
+            <div class="text-center py-12">
+                <h2 class="text-2xl font-bold text-gray-900">Không tìm thấy sản phẩm</h2>
+                <a asp-page="/Index" class="mt-4 text-indigo-600 hover:text-indigo-500">Quay về trang chủ</a>
             </div>
         }
         else
         {
-            <!-- Neu KHONG tim thay san pham -->
-            <div class="text-center">
-                <h1 class="text-3xl font-bold text-gray-900">404 - Không tìm thấy sản phẩm</h1>
-                <p class="mt-4 text-lg text-gray-600">Sản phẩm bạn đang tìm kiếm không tồn tại.</p>
-                <div class="mt-10">
-                    <a asp-page="/Index" class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">
-                        Quay về Trang Chủ
-                    </a>
+            <div class="mx-auto mt-8 max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+                <div class="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
+
+                    <div class="flex flex-col-reverse">
+                        <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-100 shadow-lg">
+                            <img src="@Model.Product.ImageUrl" alt="@Model.Product.Name" class="h-full w-full object-cover object-center">
+                        </div>
+                    </div>
+
+                    <div class="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
+                        <h1 class="text-3xl font-bold tracking-tight text-gray-900">@Model.Product.Name</h1>
+
+                        <div class="mt-4">
+                            <h2 class="sr-only">Thông tin sản phẩm</h2>
+                            <p class="text-3xl font-bold tracking-tight text-indigo-600">@Model.Product.Price.ToString("N0") ₫</p>
+                        </div>
+
+                        <div class="mt-6">
+                            <h3 class="text-sm font-medium text-gray-900">Mô tả sản phẩm</h3>
+                            <div class="mt-2 text-base text-gray-700 space-y-6">
+                                <p>@Model.Product.Description</p>
+                            </div>
+                        </div>
+
+                        <form method="post" class="mt-8 border-t border-gray-200 pt-8">
+
+                            <div>
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-sm font-medium text-gray-900">Chọn kích thước</h3>
+                                    <p id="stock-label" class="text-sm font-medium text-indigo-600 h-5"></p>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-3 sm:grid-cols-6 mt-4">
+                                    @if (Model.Product.Variants != null && Model.Product.Variants.Any())
+                                    {
+                                        @foreach (var variant in Model.Product.Variants)
+                                        {
+                                            var isOutOfStock = variant.Stock <= 0;
+
+                                            // CSS cho nút bấm: Có viền, bo góc, hiệu ứng hover
+                                            <label class="@(isOutOfStock ? "opacity-50 cursor-not-allowed bg-gray-100 text-gray-400" : "cursor-pointer bg-white text-gray-900 shadow-sm hover:bg-gray-50") group relative flex items-center justify-center rounded-md border py-3 px-4 text-sm font-medium uppercase sm:flex-1 focus:outline-none">
+
+                                                <input type="radio" name="SelectedSize" value="@variant.Size" class="sr-only"
+                                                       @(isOutOfStock ? "disabled" : "")
+                                                       onclick="updateStockDisplay('@variant.Size', @variant.Stock)">
+
+                                                <span id="size-label-@variant.Size">@variant.Size</span>
+
+                                                <span class="pointer-events-none absolute -inset-px rounded-md border-2 border-transparent group-hover:border-gray-400" aria-hidden="true"></span>
+                                            </label>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p class="col-span-3 text-red-500 text-sm">⚠️ Chưa có dữ liệu Size (Hãy xóa file ShoeShop.db và chạy lại)</p>
+                                    }
+                                </div>
+                                @if (!ViewData.ModelState.IsValid && ViewData.ModelState["SelectedSize"] != null)
+                                {
+                                    <p class="mt-2 text-sm text-red-600 font-medium">Vui lòng chọn kích thước!</p>
+                                }
+                            </div>
+
+                            <div class="mt-6">
+                                <div class="flex items-center">
+                                    <h3 class="text-sm font-medium text-gray-900 mr-4">Số lượng:</h3>
+                                    <input name="SelectedQuantity" type="number" value="1" min="1" max="10" class="w-20 rounded-md border-gray-300 border p-2 text-center shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-bold">
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                            {
+                                <div class="mt-4 rounded-md bg-red-50 p-4 border border-red-200">
+                                    <div class="flex">
+                                        <div class="ml-3">
+                                            <h3 class="text-sm font-medium text-red-800">@Model.ErrorMessage</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <button type="submit" class="mt-8 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-4 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg transition-colors">
+                                Thêm vào giỏ hàng
+                            </button>
+                        </form>
+                    </div>
                 </div>
+
+                @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
+                {
+                    <div class="mt-16 border-t border-gray-200 pt-10">
+                        <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-6">Sản phẩm cùng loại</h2>
+
+                        <div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+                            @foreach (var related in Model.RelatedProducts)
+                            {
+                                <div class="group relative bg-white border border-gray-200 rounded-lg flex flex-col overflow-hidden hover:shadow-lg transition-shadow">
+                                    <div class="aspect-w-1 aspect-h-1 bg-gray-200 group-hover:opacity-75 h-64">
+                                        <img src="@related.ImageUrl" alt="@related.Name" class="h-full w-full object-cover object-center">
+                                    </div>
+                                    <div class="flex-1 p-4 flex flex-col justify-between">
+                                        <div>
+                                            <h3 class="text-sm font-medium text-gray-900">
+                                                <a asp-page="/Detail" asp-route-id="@related.Id">
+                                                    <span aria-hidden="true" class="absolute inset-0"></span>
+                                                    @related.Name
+                                                </a>
+                                            </h3>
+                                            <p class="mt-1 text-sm text-gray-500">@related.Category</p>
+                                        </div>
+                                        <p class="text-sm font-medium text-indigo-600 mt-2">@related.Price.ToString("N0") ₫</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
             </div>
         }
     </div>
 </div>
 
 @section Scripts {
-    <!-- Trang nay khong can script dac biet -->
+    <script>
+        function updateStockDisplay(size, stock) {
+            var label = document.getElementById('stock-label');
+            if(stock > 0) {
+                label.innerText = "Size " + size + ": Còn " + stock + " sản phẩm";
+                label.className = "text-sm font-bold text-green-600 h-5";
+            } else {
+                label.innerText = "Size " + size + ": Hết hàng";
+                label.className = "text-sm font-bold text-red-600 h-5";
+            }
+        }
+    </script>
 }

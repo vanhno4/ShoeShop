@@ -34,25 +34,32 @@
 
             <!-- Cac link dieu huong -->
             <nav class="py-4">
+                <!-- 1. Dashboard -->
                 <a asp-page="/Admin/Index" class="flex items-center px-4 py-3 text-gray-100 hover:bg-gray-700">
                     <i class="fa-solid fa-tachometer-alt w-6 mr-3"></i>
                     Admin Dashboard
                 </a>
 
-                <!-- --- SUA LINK O DAY --- -->
-                <a asp-page="/Admin/AllOrders" class="flex items-center px-4 py-3 mt-2 text-gray-100 hover:bg-gray-700">
+                <!-- 2. Quản lý Đơn hàng -->
+                <a asp-page="/Admin/Orders" class="flex items-center px-4 py-3 mt-2 text-gray-100 hover:bg-gray-700">
                     <i class="fa-solid fa-file-invoice-dollar w-6 mr-3"></i>
-                    Lịch sử mua hàng (All)
+                    Lịch Sử Đơn hàng
                 </a>
-                <!-- --- KET THUC SUA --- -->
+                <a asp-page="/Admin/Inventory" class="flex items-center px-4 py-3 mt-2 text-yellow-400 hover:bg-gray-700 font-bold">
+                    <i class="fa-solid fa-warehouse w-6 mr-3"></i>
+                    Quản lý Tồn kho
+                </a>
 
+                <!-- 3. LINK MỚI: THÊM SẢN PHẨM -->
+                <a asp-page="/Admin/AddProduct" class="flex items-center px-4 py-3 mt-2 text-green-400 hover:bg-gray-700 font-bold">
+                    <i class="fa-solid fa-plus-circle w-6 mr-3"></i>
+                    Quản Lý Sản Phẩm
+                </a>
+
+                <!-- 4. Về trang chủ (Đã xóa link "Tất cả sản phẩm") -->
                 <a asp-page="/Index" class="flex items-center px-4 py-3 mt-2 text-gray-100 hover:bg-gray-700">
                     <i class="fa-solid fa-store w-6 mr-3"></i>
-                    Trang chủ (Store)
-                </a>
-                <a asp-page="/AllProducts" class="flex items-center px-4 py-3 mt-2 text-gray-100 hover:bg-gray-700">
-                    <i class="fa-solid fa-boxes-stacked w-6 mr-3"></i>
-                    Tất cả sản phẩm (Store)
+                    Trang Chủ Shop
                 </a>
             </nav>
         </aside>

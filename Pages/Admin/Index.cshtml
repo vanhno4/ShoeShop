@@ -1,47 +1,113 @@
 ﻿@page
-@model ShoeShop.Pages.Admin.IndexModel
+@model ShoeShop.Pages.Admin.DashboardModel
 @{
-    ViewData["Title"] = "Admin Dashboard";
+    ViewData["Title"] = "Dashboard";
+    Layout = "/Pages/Shared/_AdminLayout.cshtml";
 }
 
-<div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-    <h1 class="text-3xl font-bold tracking-tight text-gray-900 mb-8">
-        Quản Lý Sản Phẩm (40 sản phẩm)
-    </h1>
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded shadow-sm animate-bounce">
+        <div class="flex items-center">
+            <i class="fa-solid fa-check-circle text-xl mr-2"></i>
+            <span class="font-bold">@Model.SuccessMessage</span>
+        </div>
+    </div>
+}
 
-    <div class="bg-white shadow overflow-hidden rounded-lg">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-green-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0 bg-green-100 rounded-full p-3">
+                <i class="fa-solid fa-dollar-sign text-green-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm text-gray-500 font-medium">Tổng Doanh Thu</p>
+                <p class="text-2xl font-bold text-gray-800">@Model.TotalRevenue.ToString("N0") ₫</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-indigo-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0 bg-indigo-100 rounded-full p-3">
+                <i class="fa-solid fa-shopping-cart text-indigo-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm text-gray-500 font-medium">Tổng Đơn Hàng</p>
+                <p class="text-2xl font-bold text-gray-800">@Model.TotalOrders</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-yellow-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0 bg-yellow-100 rounded-full p-3">
+                <i class="fa-solid fa-clock text-yellow-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm text-gray-500 font-medium">Chờ Xử Lý</p>
+                <p class="text-2xl font-bold text-gray-800">@Model.PendingOrders</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-blue-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0 bg-blue-100 rounded-full p-3">
+                <i class="fa-solid fa-box text-blue-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm text-gray-500 font-medium">Tổng Sản Phẩm</p>
+                <p class="text-2xl font-bold text-gray-800">@Model.TotalProducts</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h3 class="text-lg font-bold text-gray-800">Sản phẩm mới cập nhật</h3>
+        <a asp-page="/Admin/AddProduct" class="text-sm text-indigo-600 hover:text-indigo-900 font-medium">
+            + Thêm mới
+        </a>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full text-left text-sm">
+            <thead class="bg-gray-50 text-gray-600 uppercase font-semibold">
                 <tr>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sản Phẩm</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Danh Mục</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Giá</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tồn Kho</th>
-                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Hành Động</th>
+                    <th class="px-6 py-3">ID</th>
+                    <th class="px-6 py-3">Hình ảnh</th>
+                    <th class="px-6 py-3">Tên sản phẩm</th>
+                    <th class="px-6 py-3">Giá bán</th>
+                    <th class="px-6 py-3">Tồn kho</th>
+                    <th class="px-6 py-3 text-center">Hành động</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                @foreach (var product in Model.Products)
+            <tbody class="divide-y divide-gray-200">
+                @foreach (var item in Model.RecentProducts)
                 {
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@product.Id</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <img class="h-10 w-10 rounded-full object-cover" src="@product.ImageUrl" alt="">
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">@product.Name</div>
-                                </div>
-                            </div>
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 font-medium text-gray-500">#@item.Id</td>
+                        <td class="px-6 py-4">
+                            <img src="@item.ImageUrl" class="h-10 w-10 rounded object-cover border bg-gray-100">
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@product.Category</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@product.Price.ToString("N0") ₫</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@product.Stock</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <!-- Link đến trang Sửa Sản Phẩm -->
-                            <a asp-page="/Admin/Edit" asp-route-id="@product.Id" class="text-indigo-600 hover:text-indigo-900">Sửa</a>
+                        <td class="px-6 py-4 font-medium text-gray-900">@item.Name</td>
+                        <td class="px-6 py-4 text-indigo-600 font-bold">@item.Price.ToString("N0") ₫</td>
+                        <td class="px-6 py-4">
+                            @if (item.Stock > 0)
+                            {
+                                <span class="text-green-600 font-medium">@item.Stock</span>
+                            }
+                            else
+                            {
+                                <span class="text-red-600 font-bold bg-red-50 px-2 py-1 rounded">Hết hàng</span>
+                            }
+                        </td>
+                        <td class="px-6 py-4 text-center space-x-2">
+                            <a asp-page="/Admin/Edit" asp-route-id="@item.Id" class="text-blue-600 hover:text-blue-900 font-medium border border-blue-100 px-3 py-1 rounded hover:bg-blue-50">Sửa</a>
+                            <a asp-page="/Admin/Stock" asp-route-id="@item.Id" class="text-purple-600 hover:text-purple-900 font-medium border border-purple-100 px-3 py-1 rounded hover:bg-purple-50">Size</a>
                         </td>
                     </tr>
                 }

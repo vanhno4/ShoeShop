@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema; // <-- Cần cái này
 
 namespace ShoeShop.Data
 {
@@ -9,11 +9,15 @@ namespace ShoeShop.Data
         public int Id { get; set; }
 
         [Required]
-        public int OrderId { get; set; } // Thuộc về Đơn hàng nào
+        public int OrderId { get; set; }
+        // Chỉ định rõ: OrderId là khóa ngoại trỏ đến Order
+        [ForeignKey("OrderId")]
         public Order? Order { get; set; }
 
         [Required]
-        public int ProductId { get; set; } // Là Sản phẩm nào
+        public int ProductId { get; set; }
+        // Chỉ định rõ: ProductId là khóa ngoại trỏ đến Product
+        [ForeignKey("ProductId")]
         public Product? Product { get; set; }
 
         [Required]
@@ -21,6 +25,9 @@ namespace ShoeShop.Data
 
         [Required]
         [Column(TypeName = "decimal(18, 2)")]
-        public decimal PricePaid { get; set; } // Giá tại thời điểm mua
+        public decimal PricePaid { get; set; }
+
+        [Required]
+        public string Size { get; set; } = string.Empty;
     }
 }

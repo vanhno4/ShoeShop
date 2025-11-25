@@ -1,0 +1,112 @@
+﻿@page
+@model ShoeShop.Pages.ContactModel
+@{
+    ViewData["Title"] = "Liên hệ";
+}
+
+<div class="bg-gray-50 min-h-screen py-16 px-4 sm:px-6 lg:px-8">
+
+    @if (Model.IsSent)
+    {
+        <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-10 text-center animate-fade-in-up">
+            <div class="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-green-100 mb-6">
+                <i class="fa-solid fa-paper-plane text-4xl text-green-600"></i>
+            </div>
+
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-4">Tin nhắn đã được gửi!</h1>
+
+            <p class="text-xl text-gray-600 mb-8">
+                Cảm ơn <strong>@Model.Name</strong> đã liên hệ. <br>
+                Chúng tôi sẽ phản hồi sớm nhất có thể (thường trong vòng 24h).
+            </p>
+
+            <a asp-page="/Index" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:text-lg shadow-md transition-transform transform hover:-translate-y-1">
+                <i class="fa-solid fa-house mr-2"></i>
+                Quay về Trang Chủ
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
+
+            <div class="space-y-8">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-gray-900">Liên hệ với chúng tôi</h2>
+                    <p class="mt-4 text-lg text-gray-500">
+                        Bạn có thắc mắc về sản phẩm hay đơn hàng? Đừng ngần ngại để lại lời nhắn.
+                    </p>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <i class="fa-solid fa-phone text-indigo-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-base font-medium text-gray-900">Điện thoại</h3>
+                            <p class="text-gray-500">+84 975920569</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <i class="fa-solid fa-envelope text-indigo-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-base font-medium text-gray-900">Email</h3>
+                            <p class="text-gray-500">vietkeyy98@gmail.com</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-1">
+                            <i class="fa-solid fa-location-dot text-indigo-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-base font-medium text-gray-900">Địa chỉ</h3>
+                            <p class="text-gray-500">218 Lĩnh Nam, Quận Hoàng Mai, Thành phố Hà Nội</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full h-80 bg-gray-200 rounded-lg overflow-hidden shadow-md border border-gray-200">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.8626497492314!2d105.87393931531377!3d20.99814458601487!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ac04df25e4ef%3A0xca6471652c77039!2zVHLGsOG7nW5nIMSQ4bqhaSBI4buNYyBLaW5oIFThur8gS-G7uSBUaHXhuq10IEPDtG5nIE5naGnhu4dw!5e0!3m2!1svi!2s!4v1710300000000!5m2!1svi!2s"
+                            width="100%"
+                            height="100%"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="bg-white py-8 px-10 shadow-lg rounded-lg border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">Gửi tin nhắn cho chúng tôi</h3>
+
+                <form method="post" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Họ và tên</label>
+                        <input asp-for="Name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-3 px-4 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition" placeholder="Nhập tên của bạn">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <input name="Email" type="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-3 px-4 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition" placeholder="vidu@gmail.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Chủ đề</label>
+                        <input name="Subject" type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-3 px-4 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Lời nhắn</label>
+                        <textarea name="Message" rows="4" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-3 px-4 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition" placeholder="Nội dung tin nhắn..."></textarea>
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                            <i class="fa-solid fa-paper-plane mr-2 pt-1"></i> Gửi Tin Nhắn
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+</div>

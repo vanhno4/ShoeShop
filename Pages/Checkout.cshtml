@@ -4,47 +4,69 @@
     ViewData["Title"] = "Thanh Toán";
 }
 
+<!-- Script Alpine.js (Bắt buộc cho QR Code) -->
+<script src="//unpkg.com/alpinejs" defer></script>
+
 <div class="bg-white">
     <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
 
-        <div class="mb-8">
-            <a asp-page="/Index" class="text-sm font-medium text-blue-600 hover:text-blue-500">
-                &larr; Trở về trang chủ (Mua thêm)
+        <!-- --- NÚT QUAY VỀ (ĐÃ ĐƯỢC THÊM LẠI) --- -->
+        <div class="mb-8 flex items-center">
+            <a asp-page="/Index" class="flex items-center text-sm font-medium text-blue-600 hover:text-blue-500">
+                <svg class="mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Quay về trang chủ (Mua thêm)
             </a>
         </div>
+        <!-- ------------------------------------- -->
+        <!-- Hiển thị thông báo lỗi (nếu không thanh toán được) -->
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="rounded-md bg-red-50 p-4 mb-6 border-l-4 border-red-400">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fa-solid fa-circle-exclamation text-red-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">Lỗi thanh toán</h3>
+                        <div class="mt-2 text-sm text-red-700">@Model.ErrorMessage</div>
+                    </div>
+                </div>
+            </div>
+        }
 
         <div class="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16">
 
-            <!-- 1. COT BEN TRAI: FORM GIAO HANG & THANH TOAN (Giu nguyen) -->
+            <!-- 1. CỘT TRÁI: THÔNG TIN & THANH TOÁN -->
             <div>
                 <form method="post" class="mt-6 grid grid-cols-1 gap-y-6" x-data="{ paymentMethod: '@Model.PaymentMethod' }">
-                    <h2 class="text-lg font-medium text-gray-900">Shipping address</h2>
-                    <p class="mt-1 text-sm text-gray-600">Điền thông tin nhận hàng của bạn.</p>
+                    <h2 class="text-lg font-medium text-gray-900">Thông tin giao hàng</h2>
 
-                    <!-- Form (Name, Telephone, Address) -->
+                    <!-- Form -->
                     <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700">Họ và tên</label>
+                        <label asp-for="Name" class="block text-sm font-medium text-gray-700">Họ và tên</label>
                         <div class="mt-1">
-                            <input type="text" asp-for="Name" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <input asp-for="Name" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                             <span asp-validation-for="Name" class="text-red-600 text-sm"></span>
                         </div>
                     </div>
                     <div>
-                        <label for="telephone" class="block text-sm font-medium text-gray-700">Số điện thoại</label>
+                        <label asp-for="Telephone" class="block text-sm font-medium text-gray-700">Số điện thoại</label>
                         <div class="mt-1">
-                            <input type="text" asp-for="Telephone" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <input asp-for="Telephone" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                             <span asp-validation-for="Telephone" class="text-red-600 text-sm"></span>
                         </div>
                     </div>
                     <div>
-                        <label for="address" class="block text-sm font-medium text-gray-700">Địa chỉ</label>
+                        <label asp-for="Address" class="block text-sm font-medium text-gray-700">Địa chỉ nhận hàng</label>
                         <div class="mt-1">
-                            <input type="text" asp-for="Address" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <input asp-for="Address" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                             <span asp-validation-for="Address" class="text-red-600 text-sm"></span>
                         </div>
                     </div>
 
-                    <!-- Phuong thuc thanh toan (Giu nguyen) -->
+                    <!-- Phương thức thanh toán -->
                     <div class="mt-8 pt-8 border-t border-gray-200">
                         <h2 class="text-lg font-medium text-gray-900">Phương thức thanh toán</h2>
                         <fieldset class="mt-4">
@@ -59,102 +81,100 @@
                                 </div>
                             </div>
                         </fieldset>
-                        <div x-show="paymentMethod === 'qr'" x-transition class="mt-6 p-4 border rounded-md bg-gray-50 flex justify-center">
-                            <img src="/images/qr_thanh_toan.png" alt="Mã QR Thanh Toán" class="rounded-md w-64 h-64">
+
+                        <!-- QR Code -->
+                        <div x-show="paymentMethod === 'qr'" x-transition class="mt-6 p-4 border rounded-md bg-gray-50 flex justify-center flex-col items-center">
+                            <p class="text-sm text-gray-500 mb-2">Quét mã để thanh toán:</p>
+                            <img src="link-qr-code-api-cua-ban"
+                                 onerror="this.onerror=null; this.src='/images/qr.jpg'"
+                                 alt="Mã QR chuyển khoản"
+                                 class="w-40 h-40 object-cover rounded-md border" />
                         </div>
                     </div>
 
-                    <!-- Nut Thanh Toan (Giu nguyen) -->
+                    <!-- Nút Thanh Toán -->
                     <div class="mt-8 pt-8 border-t border-gray-200">
                         <button type="submit" class="w-full bg-blue-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Thanh Toán
+                            Thanh Toán Ngay
                         </button>
                     </div>
                 </form>
             </div>
 
-            <!--
-                2. COT BEN PHAI: GIO HANG (DA CAP NHAT)
-            -->
+            <!-- 2. CỘT PHẢI: GIỎ HÀNG -->
             <div class="mt-10 lg:mt-0">
-                <h2 class="text-lg font-medium text-gray-900">Your cart</h2>
+                <h2 class="text-lg font-medium text-gray-900">Giỏ hàng của bạn</h2>
 
                 <div class="mt-4 rounded-lg border border-gray-200 bg-white shadow-sm">
                     <ul role="list" class="divide-y divide-gray-200">
-
                         @foreach (var item in Model.CartItems)
                         {
                             <li class="flex py-6 px-4 sm:px-6">
                                 <div class="flex-shrink-0">
-                                    <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="w-20 rounded-md">
+                                    <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="w-20 rounded-md object-cover">
                                 </div>
                                 <div class="ml-6 flex flex-1 flex-col">
                                     <div class="flex">
                                         <div class="min-w-0 flex-1">
                                             <h4 class="text-sm font-medium text-gray-900">@item.Product.Name</h4>
+                                            <p class="mt-1 text-sm text-gray-500">Size: <strong>@item.Size</strong></p>
                                             <p class="mt-1 text-sm text-gray-500">Số lượng: @item.Quantity</p>
                                         </div>
                                     </div>
 
-                                    <!--
-                                        --- SUA LOGIC HIEN THI GIA O DAY ---
-                                    -->
                                     <div class="flex flex-1 items-end justify-between pt-2">
-                                        @if (item.OriginalTotalPrice.HasValue && item.OriginalTotalPrice > item.TotalPrice)
-                                        {
-                                            <!-- Hien thi 2 gia (giam gia) -->
-                                            <div class="text-right">
+                                        <!-- Giá -->
+                                        <div class="text-right">
+                                            @if (item.OriginalTotalPrice.HasValue && item.OriginalTotalPrice > item.TotalPrice)
+                                            {
                                                 <p class="text-sm font-medium text-red-600">@item.TotalPrice.ToString("N0") ₫</p>
                                                 <p class="text-xs text-gray-500 line-through">@item.OriginalTotalPrice.Value.ToString("N0") ₫</p>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <!-- Hien thi gia thuong -->
-                                            <p class="text-sm font-medium text-gray-900">@item.TotalPrice.ToString("N0") ₫</p>
-                                        }
-                                    </div>
-                                    <!-- --- KET THUC SUA --- -->
+                                            }
+                                            else
+                                            {
+                                                <p class="text-sm font-medium text-gray-900">@item.TotalPrice.ToString("N0") ₫</p>
+                                            }
+                                        </div>
 
+                                        <!-- Nút Xóa -->
+                                        <div class="ml-4">
+                                            <form method="post" asp-page-handler="RemoveItem">
+                                                <input type="hidden" name="productId" value="@item.Product.Id" />
+                                                <input type="hidden" name="size" value="@item.Size" />
+                                                <button type="submit" class="text-sm font-medium text-red-600 hover:text-red-500 bg-transparent border-none cursor-pointer p-0">
+                                                    Xóa
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </li>
                         }
                     </ul>
 
-                    <!--
-                        --- SUA PHAN TINH TIEN ---
-                    -->
                     <dl class="space-y-4 border-t border-gray-200 py-6 px-4 sm:px-6">
                         <div class="flex items-center justify-between">
-                            <dt class="text-sm">Tạm tính (Subtotal)</dt>
+                            <dt class="text-sm">Tạm tính</dt>
                             <dd class="text-sm font-medium text-gray-900">@Model.Subtotal.ToString("N0") ₫</dd>
                         </div>
-
-                        <!-- Them dong "Tiet kiem" (neu co) -->
                         @if (Model.TotalSavings > 0)
                         {
                             <div class="flex items-center justify-between text-green-600">
-                                <dt class="text-sm">Bạn đã tiết kiệm</dt>
+                                <dt class="text-sm">Tiết kiệm được</dt>
                                 <dd class="text-sm font-medium">- @Model.TotalSavings.ToString("N0") ₫</dd>
                             </div>
                         }
-
                         <div class="flex items-center justify-between">
-                            <dt class="text-sm">Phí vận chuyển (Shipping)</dt>
+                            <dt class="text-sm">Phí vận chuyển</dt>
                             <dd class="text-sm font-medium text-gray-900">@Model.Shipping.ToString("N0") ₫</dd>
                         </div>
                         <div class="flex items-center justify-between border-t border-gray-200 pt-4">
-                            <dt class="text-base font-medium">Tổng cộng (Total)</dt>
-                            <dd class="text-base font-medium text-gray-900">@Model.Total.ToString("N0") ₫</dd>
+                            <dt class="text-base font-bold text-gray-900">Tổng cộng</dt>
+                            <dd class="text-base font-bold text-gray-900">@Model.Total.ToString("N0") ₫</dd>
                         </div>
                     </dl>
-                    <!-- --- KET THUC SUA --- -->
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <script src="//unpkg.com/alpinejs" defer></script>
-}

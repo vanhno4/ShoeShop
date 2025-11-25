@@ -1,0 +1,63 @@
+﻿@page
+@model ShoeShop.Pages.Admin.OrdersModel
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+    Layout = "/Pages/Shared/_AdminLayout.cshtml";
+}
+
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Quản lý đơn hàng</h2>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200">
+            <thead class="bg-gray-50 text-gray-500 uppercase text-xs font-medium">
+                <tr>
+                    <th class="py-3 px-4 text-left">ID</th>
+                    <th class="py-3 px-4 text-left">Khách Hàng</th>
+                    <th class="py-3 px-4 text-left">Sản phẩm đã mua</th>
+                    <th class="py-3 px-4 text-left">Tổng Tiền</th>
+                    <th class="py-3 px-4 text-left">Ngày Đặt</th>
+                    <th class="py-3 px-4 text-left">Trạng Thái</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                @foreach (var order in Model.Orders)
+                {
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-4 px-4 font-bold text-indigo-600">#@order.Id</td>
+
+                        <td class="py-4 px-4 text-sm">
+                            <div class="font-bold text-gray-900">@order.ShippingAddress.Split(',')[0]</div> <div class="text-gray-500 text-xs">@order.ShippingAddress</div>
+                        </td>
+
+                        <td class="py-4 px-4">
+                            <div class="flex -space-x-2 overflow-hidden">
+                                @foreach (var item in order.OrderItems)
+                                {
+                                    <img class="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover bg-gray-100 border"
+                                         src="@(item.Product?.ImageUrl ?? "https://via.placeholder.com/40")"
+                                         alt="@(item.Product?.Name)"
+                                         title="@(item.Product?.Name) - Size: @item.Size (x@item.Quantity)">
+                                }
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1 ml-1">
+                            @order.OrderItems.Sum(i => i.Quantity) sản phẩm
+                        </div>
+                    </td>
+
+                    <td class="py-4 px-4 font-bold text-gray-800">@order.TotalAmount.ToString("N0") ₫</td>
+                    <td class="py-4 px-4 text-sm text-gray-600">@order.OrderDate.ToString("dd/MM HH:mm")</td>
+
+                    <td class="py-4 px-4">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                @(order.Status == "Đã hủy" ? "bg-red-100 text-red-800" :
+                                                                order.Status == "Đang chờ vận chuyển" ? "bg-yellow-100 text-yellow-800" : "bg-green-100 text-green-800")">
+                            @order.Status
+                        </span>
+                    </td>
+                </tr>
+                                }
+            </tbody>
+        </table>
+    </div>
+</div>

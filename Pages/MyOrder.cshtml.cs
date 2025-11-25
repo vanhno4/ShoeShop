@@ -9,7 +9,7 @@ namespace ShoeShop.Pages
     public class MyOrderModel : PageModel
     {
         // Dung chung ViewModel voi trang Checkout
-        public List<CartItemViewModel> OrderItems { get; set; } = new List<CartItemViewModel>();
+        public List<CartViewModel> OrderItems { get; set; } = new List<CartViewModel>();
 
         public IActionResult OnGet()
         {
@@ -23,7 +23,7 @@ namespace ShoeShop.Pages
             }
 
             // Chuyen JSON thanh danh sach san pham
-            OrderItems = JsonSerializer.Deserialize<List<CartItemViewModel>>(lastOrderJson) ?? new List<CartItemViewModel>();
+            OrderItems = JsonSerializer.Deserialize<List<CartViewModel>>(lastOrderJson) ?? new List<CartViewModel>();
 
             // Xoa "LastOrder" di de lan sau khong xem lai duoc nua (tuy chon)
             // HttpContext.Session.Remove("LastOrder");

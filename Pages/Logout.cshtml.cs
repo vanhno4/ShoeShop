@@ -7,19 +7,21 @@ namespace ShoeShop.Pages
 {
     public class LogoutModel : PageModel
     {
-        // Hàm OnGet sẽ chạy ngay khi bạn truy cập /Logout
+        public async Task<IActionResult> OnPostAsync()
+        {
+            // Xóa Cookie đăng nhập
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            // Xóa Session giỏ hàng
+            HttpContext.Session.Clear();
+            // Quay về trang chủ
+            return RedirectToPage("/Index");
+        }
+
+        // Nếu lỡ vào bằng GET cũng cho đăng xuất luôn
         public async Task<IActionResult> OnGetAsync()
         {
-            // 1. Xóa cookie đăng nhập (như cũ)
-            await HttpContext.SignOutAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme);
-
-            // --- DÒNG MỚI ĐƯỢC THÊM ---
-            // 2. Xóa giỏ hàng khỏi Session
-            HttpContext.Session.Remove("Cart");
-            // --- KẾT THÚC THÊM ---
-
-            // 3. Chuyển về Trang Chủ (như cũ)
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
             return RedirectToPage("/Index");
         }
     }

@@ -2,21 +2,36 @@
 
 namespace ShoeShop.Data
 {
-    // Kế thừa từ DbContext của EF Core
     public class ApplicationDbContext : DbContext
     {
-        // Hàm khởi tạo, nhận các tùy chọn cấu hình
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
 
-        // Khai báo với EF Core rằng chúng ta có một bảng tên là "Products"
-        // dựa trên mô hình "Product"
         public DbSet<Product> Products { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<ProductVariant> ProductVariants { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
-        public DbSet<ProductVariant> ProductVariants { get; set; }
+        public DbSet<User> Users { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Cấu hình mối quan hệ Order - OrderItem
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(oi => oi.OrderId)
+                .OnDelete(DeleteBehavior.Cascade); // Xóa đơn thì xóa luôn chi tiết
+
+            // Cấu hình mối quan hệ Product - OrderItem
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Product)
+                .WithMany() // Một sản phẩm có thể nằm trong nhiều đơn
+                .HasForeignKey(oi => oi.ProductId)
+                .OnDelete(DeleteBehavior.Restrict); // Xóa sản phẩm không được xóa lịch sử đơn
+        }
     }
 }

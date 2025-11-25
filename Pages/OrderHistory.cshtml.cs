@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ShoeShop.Data;
+using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ShoeShop.Pages
 {
@@ -17,6 +17,7 @@ namespace ShoeShop.Pages
             _context = context;
         }
 
+        // Tên biến thống nhất là Orders
         public List<Order> Orders { get; set; } = new List<Order>();
 
         [TempData]
@@ -24,87 +25,74 @@ namespace ShoeShop.Pages
         [TempData]
         public string? ErrorMessage { get; set; }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task OnGetAsync()
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!int.TryParse(userIdString, out var userId))
+            if (int.TryParse(userIdString, out var userId))
             {
-                return RedirectToPage("/Login");
+                // QUAN TRỌNG: Cấu trúc lệnh này giúp lấy đầy đủ Ảnh và Tên
+                Orders = await _context.Orders
+                    .Where(o => o.UserId == userId)
+                    .Include(o => o.OrderItems)          // 1. Lấy chi tiết đơn
+                        .ThenInclude(oi => oi.Product)   // 2. KẾT NỐI VỚI BẢNG SẢN PHẨM (Để lấy Ảnh, Tên)
+                    .OrderByDescending(o => o.OrderDate)
+                    .ToListAsync();
             }
-
-            Orders = await _context.Orders
-                .Where(o => o.UserId == userId)
-                .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Product)
-                .OrderByDescending(o => o.OrderDate)
-                .ToListAsync();
-
-            return Page();
         }
 
-        // --- HÀM MỚI ĐỂ HỦY ĐƠN HÀNG ---
+        // Hàm Hủy Đơn Hàng (Đã tích hợp hoàn kho Size)
         public async Task<IActionResult> OnPostCancelAsync(int orderId)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!int.TryParse(userIdString, out var userId))
-            {
-                return RedirectToPage("/Login"); // Chua dang nhap
-            }
+            if (!int.TryParse(userIdString, out var userId)) return RedirectToPage("/Login");
 
-            // Bat dau Giao dich (Transaction)
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    // 1. Tim don hang (phai la cua user nay)
                     var order = await _context.Orders
-                        .Include(o => o.OrderItems) // Lay cac san pham
+                        .Include(o => o.OrderItems)
                         .FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == userId);
 
-                    if (order == null)
+                    if (order == null || order.Status != "Đang chờ vận chuyển")
                     {
-                        ErrorMessage = "Không tìm thấy đơn hàng.";
+                        ErrorMessage = "Không thể hủy đơn hàng này.";
                         return RedirectToPage();
                     }
 
-                    // 2. Chi duoc huy neu dang "Cho van chuyen"
-                    if (order.Status != "Đang chờ vận chuyển")
-                    {
-                        ErrorMessage = "Không thể hủy đơn hàng ở trạng thái này.";
-                        return RedirectToPage();
-                    }
-
-                    // 3. HOAN KHO (Cong lai so luong)
+                    // Hoàn kho
                     foreach (var item in order.OrderItems)
                     {
+                        // 1. Hoàn kho Variant (Size)
+                        var variant = await _context.ProductVariants
+                            .FirstOrDefaultAsync(v => v.ProductId == item.ProductId && v.Size == item.Size);
+                        if (variant != null)
+                        {
+                            variant.Stock += item.Quantity;
+                            _context.ProductVariants.Update(variant);
+                        }
+
+                        // 2. Hoàn kho Tổng (Product)
                         var product = await _context.Products.FindAsync(item.ProductId);
                         if (product != null)
                         {
-                            product.Stock += item.Quantity; // Cong tra lai so luong
+                            product.Stock += item.Quantity;
                             _context.Products.Update(product);
                         }
                     }
 
-                    // 4. Cap nhat trang thai don hang
                     order.Status = "Đã hủy";
                     _context.Orders.Update(order);
-
-                    // 5. Luu tat ca thay doi (Hoan kho + Huy don)
                     await _context.SaveChangesAsync();
-
-                    // 6. Hoan tat Giao dich
                     await transaction.CommitAsync();
-
-                    SuccessMessage = $"Đã hủy thành công đơn hàng #{order.Id}.";
+                    SuccessMessage = $"Đã hủy đơn hàng #{order.Id}.";
                 }
-                catch (Exception ex)
+                catch
                 {
-                    // Neu co loi, huy bo tat ca
                     await transaction.RollbackAsync();
-                    ErrorMessage = "Lỗi khi hủy đơn hàng: " + ex.Message;
+                    ErrorMessage = "Lỗi hệ thống khi hủy đơn.";
                 }
             }
-
             return RedirectToPage();
         }
     }

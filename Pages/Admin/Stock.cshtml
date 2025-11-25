@@ -1,0 +1,56 @@
+﻿@page "/Admin/Stock/{id:int}"
+@model ShoeShop.Pages.Admin.StockModel
+@{
+    ViewData["Title"] = "Quản lý Size & Tồn kho";
+    Layout = "/Pages/Shared/_AdminLayout.cshtml";
+}
+
+<div class="max-w-2xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800">Quản lý tồn kho</h2>
+            <p class="text-gray-500">Sản phẩm: <span class="font-bold text-indigo-600">@Model.Product.Name</span></p>
+        </div>
+        <a asp-page="/Admin/Products" class="text-gray-600 hover:text-gray-900">&larr; Quay lại</a>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6">@Model.SuccessMessage</div>
+    }
+
+    <form method="post" class="bg-white shadow rounded-lg p-8">
+        <div class="space-y-6">
+
+            <div class="flex items-center justify-between border-b pb-4">
+                <div>
+                    <label class="block text-lg font-medium text-gray-900">Size M</label>
+                    <span class="text-sm text-gray-500">Medium</span>
+                </div>
+                <input asp-for="StockM" type="number" min="0" class="w-32 border-gray-300 rounded-md shadow-sm p-2 border text-center font-bold text-lg">
+            </div>
+
+            <div class="flex items-center justify-between border-b pb-4">
+                <div>
+                    <label class="block text-lg font-medium text-gray-900">Size L</label>
+                    <span class="text-sm text-gray-500">Large</span>
+                </div>
+                <input asp-for="StockL" type="number" min="0" class="w-32 border-gray-300 rounded-md shadow-sm p-2 border text-center font-bold text-lg">
+            </div>
+
+            <div class="flex items-center justify-between border-b pb-4">
+                <div>
+                    <label class="block text-lg font-medium text-gray-900">Size XL</label>
+                    <span class="text-sm text-gray-500">Extra Large</span>
+                </div>
+                <input asp-for="StockXL" type="number" min="0" class="w-32 border-gray-300 rounded-md shadow-sm p-2 border text-center font-bold text-lg">
+            </div>
+
+            <div class="pt-4 flex justify-end">
+                <button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 font-bold shadow">
+                    <i class="fa-solid fa-save mr-2"></i> Lưu Tồn Kho
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
